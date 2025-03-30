@@ -1,9 +1,7 @@
-using HybridMicroOrm.Internals;
-
 namespace HybridMicroOrm;
 
 public class HybridMicroOrmOptions
 {
     public string ConnectionString { get; set; } = string.Empty;
-    public string TableName { get; set; } = DbConstants.DefaultTableName;
+    public string TableName { get; set; } = Constants.DefaultTableName;
 }

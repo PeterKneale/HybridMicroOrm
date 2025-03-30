@@ -1,3 +1,5 @@
+using HybridMicroOrm.Contracts;
+
 namespace HybridMicroOrm.Tests;
 
 public class ListTests(IntegrationTestFixture fixture, ITestOutputHelper output) : MultiUserScenario(fixture, output)

@@ -1,6 +1,6 @@
-﻿namespace HybridMicroOrm.Internals;
+﻿namespace HybridMicroOrm;
 
-internal static class DbConstants
+internal static class Constants
 {
     public const string DefaultTableName = "records";
     public const string Id = "id";

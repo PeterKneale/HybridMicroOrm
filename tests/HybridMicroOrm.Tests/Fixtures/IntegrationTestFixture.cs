@@ -1,4 +1,4 @@
-using HybridMicroOrm.Contexts;
+using HybridMicroOrm.Contracts;
 using HybridMicroOrm.Tests.Contexts;
 
 namespace HybridMicroOrm.Tests.Fixtures;

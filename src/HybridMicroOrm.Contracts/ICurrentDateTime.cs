@@ -1,4 +1,4 @@
-namespace HybridMicroOrm.Contexts;
+namespace HybridMicroOrm.Contracts;
 
 public interface ICurrentDateTime
 {

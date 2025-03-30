@@ -1,4 +1,4 @@
-namespace HybridMicroOrm;
+namespace HybridMicroOrm.Contracts;
 
 public class ListRequest(string type)
 {

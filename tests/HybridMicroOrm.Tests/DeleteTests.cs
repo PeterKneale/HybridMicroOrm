@@ -1,3 +1,5 @@
+using HybridMicroOrm.Contracts;
+
 namespace HybridMicroOrm.Tests;
 
 public class DeleteTests(IntegrationTestFixture fixture, ITestOutputHelper output) : BaseTest(fixture, output)

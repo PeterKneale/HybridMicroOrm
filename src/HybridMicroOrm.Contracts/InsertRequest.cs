@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace HybridMicroOrm;
+namespace HybridMicroOrm.Contracts;
 
 public record InsertRequest
 {

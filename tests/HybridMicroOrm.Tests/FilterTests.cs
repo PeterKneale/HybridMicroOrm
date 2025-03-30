@@ -1,3 +1,6 @@
+using HybridMicroOrm.Contracts;
+using Record = HybridMicroOrm.Contracts.Record;
+
 namespace HybridMicroOrm.Tests;
 
 public class FilterTests(IntegrationTestFixture fixture, ITestOutputHelper output) : MultiUserScenario(fixture, output)

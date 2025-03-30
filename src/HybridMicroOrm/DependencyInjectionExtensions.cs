@@ -1,5 +1,3 @@
-using HybridMicroOrm.Contexts;
-using HybridMicroOrm.Internals;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HybridMicroOrm;
@@ -10,7 +8,7 @@ public static class DependencyInjectionExtensions
     {
         services.Configure(configureOptions);
         services.AddScoped<ICurrentDateTime, DefaultCurrentDateTime>();
-        services.AddScoped<IHybridMicroOrm, Internals.HybridMicroOrm>();
+        services.AddScoped<IHybridMicroOrm, HybridMicroOrm>();
         services.AddScoped<IHybridMicroOrmManager, HybridMicroOrmManager>();
         return services;
     }

@@ -7,10 +7,21 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Dapper" Version="[2.0.4,3)"/>
+        <PackageReference Include="Dapper" Version="[2.1.1,2.2)" />
         <PackageReference Include="Microsoft.Extensions.Options" Version="[8.0.0,9.0.0)"/>
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
+        <PackageReference Include="Newtonsoft.Json" Version="[13.0.1,14)"/>
         <PackageReference Include="Npgsql" Version="[9.0,10.0)"/>
     </ItemGroup>
 
+    <ItemGroup>
+        <Using Include="Dapper"/>
+        <Using Include="HybridMicroOrm.Contracts"/>
+        <Using Include="Microsoft.Extensions.Logging"/>
+        <Using Include="Microsoft.Extensions.Options"/>
+        <Using Include="Npgsql"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\HybridMicroOrm.Contracts\HybridMicroOrm.Contracts.csproj" />
+    </ItemGroup>
 </Project>

@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".docker", ".docker", "{88C1
 		docker-compose.yml = docker-compose.yml
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HybridMicroOrm.Contracts", "src\HybridMicroOrm.Contracts\HybridMicroOrm.Contracts.csproj", "{D8DC8D3F-4C99-4EB3-A4FC-90508ACC9556}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,18 @@ Global
 		{2DDA9E85-2AD5-454C-A9FB-E7AAF0F836E5}.Release|x64.Build.0 = Release|Any CPU
 		{2DDA9E85-2AD5-454C-A9FB-E7AAF0F836E5}.Release|x86.ActiveCfg = Release|Any CPU
 		{2DDA9E85-2AD5-454C-A9FB-E7AAF0F836E5}.Release|x86.Build.0 = Release|Any CPU
+		{D8DC8D3F-4C99-4EB3-A4FC-90508ACC9556}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D8DC8D3F-4C99-4EB3-A4FC-90508ACC9556}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D8DC8D3F-4C99-4EB3-A4FC-90508ACC9556}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D8DC8D3F-4C99-4EB3-A4FC-90508ACC9556}.Debug|x64.Build.0 = Debug|Any CPU
+		{D8DC8D3F-4C99-4EB3-A4FC-90508ACC9556}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D8DC8D3F-4C99-4EB3-A4FC-90508ACC9556}.Debug|x86.Build.0 = Debug|Any CPU
+		{D8DC8D3F-4C99-4EB3-A4FC-90508ACC9556}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D8DC8D3F-4C99-4EB3-A4FC-90508ACC9556}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D8DC8D3F-4C99-4EB3-A4FC-90508ACC9556}.Release|x64.ActiveCfg = Release|Any CPU
+		{D8DC8D3F-4C99-4EB3-A4FC-90508ACC9556}.Release|x64.Build.0 = Release|Any CPU
+		{D8DC8D3F-4C99-4EB3-A4FC-90508ACC9556}.Release|x86.ActiveCfg = Release|Any CPU
+		{D8DC8D3F-4C99-4EB3-A4FC-90508ACC9556}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -58,5 +72,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{2CF53696-AEF0-4EC6-A719-419C081D48AB} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{2DDA9E85-2AD5-454C-A9FB-E7AAF0F836E5} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
+		{D8DC8D3F-4C99-4EB3-A4FC-90508ACC9556} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 	EndGlobalSection
 EndGlobal

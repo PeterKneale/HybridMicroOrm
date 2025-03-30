@@ -1,15 +1,15 @@
-using Dapper;
-using HybridMicroOrm.Contexts;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Npgsql;
-using static HybridMicroOrm.Internals.DbConstants;
+using static HybridMicroOrm.Constants;
 
-namespace HybridMicroOrm.Internals;
+namespace HybridMicroOrm;
 
 internal class HybridMicroOrm(ITenantContext tenantContext, IUserContext userContext, ICurrentDateTime currentDateTime, IOptions<HybridMicroOrmOptions> options, ILogger<HybridMicroOrm> log) : IHybridMicroOrm
 {
     private readonly HybridMicroOrmOptions _options = options.Value ?? throw new ArgumentNullException(nameof(options));
+
+    private NpgsqlConnection GetConnection()
+    {
+        return new NpgsqlConnection(_options.ConnectionString);
+    }
 
     public async Task Insert(InsertRequest request)
     {
@@ -28,7 +28,7 @@ internal class HybridMicroOrm(ITenantContext tenantContext, IUserContext userCon
         };
         Log(sql, parameters);
 
-        await using var connection = await GetConnection();
+        await using var connection = GetConnection();
         await connection.ExecuteAsync(sql, parameters);
     }
 
@@ -47,7 +47,7 @@ internal class HybridMicroOrm(ITenantContext tenantContext, IUserContext userCon
             tenantContext.TenantId
         };
         Log(sql, parameters);
-        await using var connection = await GetConnection();
+        await using var connection = GetConnection();
         return await connection.QuerySingleOrDefaultAsync<Record>(sql, parameters);
     }
 
@@ -73,7 +73,7 @@ internal class HybridMicroOrm(ITenantContext tenantContext, IUserContext userCon
         }
 
         Log(sql, parameters);
-        await using var connection = await GetConnection();
+        await using var connection = GetConnection();
         return await connection.QueryAsync<Record>(sql, parameters);
     }
 
@@ -115,7 +115,7 @@ internal class HybridMicroOrm(ITenantContext tenantContext, IUserContext userCon
         };
         Log(sql, parameters);
 
-        await using var connection = await GetConnection();
+        await using var connection = GetConnection();
         await connection.ExecuteAsync(sql, parameters);
     }
 
@@ -127,7 +127,7 @@ internal class HybridMicroOrm(ITenantContext tenantContext, IUserContext userCon
             Id = id, tenantContext.TenantId
         };
         Log(sql, parameters);
-        await using var connection = await GetConnection();
+        await using var connection = GetConnection();
         await connection.ExecuteAsync(sql, parameters);
     }
 
@@ -142,13 +142,8 @@ internal class HybridMicroOrm(ITenantContext tenantContext, IUserContext userCon
             tenantContext.TenantId
         };
         Log(sql, parameters);
-        await using var connection = await GetConnection();
+        await using var connection = GetConnection();
         await connection.ExecuteAsync(sql, parameters);
-    }
-
-    private Task<NpgsqlConnection> GetConnection()
-    {
-        return Task.FromResult(new NpgsqlConnection(_options.ConnectionString));
     }
 
     private void Log(string sql, object parameters)

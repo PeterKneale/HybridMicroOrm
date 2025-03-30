@@ -1,0 +1,83 @@
+name: Build
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+      pull-requests: write
+      checks: write
+      
+    container: mcr.microsoft.com/dotnet/sdk:9.0
+
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: admin
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: db
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          show-progress: 'false'
+          
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore
+        
+      - name: Build
+        run: dotnet build --no-restore
+      
+      - name: Test
+        run: |
+          dotnet test tests/HybridMicroOrm.Tests/         --no-build --verbosity normal --collect:"XPlat Code Coverage" --logger "trx;LogFileName=test-results.trx"
+        env:
+          DB_HOST: postgres
+          
+      - name: Restore coverage history
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          name: CoverageHistory
+          path: CoverageHistory
+        continue-on-error: true
+    
+      - name: ReportGenerator
+        uses: danielpalme/ReportGenerator-GitHub-Action@5
+        with:
+          reports: '**/TestResults/*/coverage.cobertura.xml'
+          targetdir: 'CoverageReports'
+          historydir: 'CoverageHistory'
+          reporttypes: 'HtmlInline;Cobertura'
+    
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: CoverageReports
+          path: CoverageReports
+    
+      - name: Upload coverage history
+        uses: actions/upload-artifact@v4
+        with:
+          name: CoverageHistory
+          path: CoverageHistory

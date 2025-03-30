@@ -1,3 +1,5 @@
+using HybridMicroOrm.Contracts;
+
 namespace HybridMicroOrm.Tests.TestScenarios;
 
 public class MultiTenantScenario(IntegrationTestFixture fixture, ITestOutputHelper output)

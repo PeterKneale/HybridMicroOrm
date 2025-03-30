@@ -1,0 +1,25 @@
+name: Diagram
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          show-progress: 'false'
+          
+      - name: Update diagram
+        uses: githubocto/repo-visualizer@0.7.1
+        with:
+          output_file: "docs/diagram.svg"
+          excluded_globs: "**/*.{png,jpg,md,http,sql,svg,yml,csproj,sln};"

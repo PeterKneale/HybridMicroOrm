@@ -1,10 +1,6 @@
-using Dapper;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Npgsql;
-using static HybridMicroOrm.Internals.DbConstants;
+using static HybridMicroOrm.Constants;
 
-namespace HybridMicroOrm.Internals;
+namespace HybridMicroOrm;
 
 internal class HybridMicroOrmManager(IOptions<HybridMicroOrmOptions> options, ILogger<HybridMicroOrmManager> log) : IHybridMicroOrmManager
 {

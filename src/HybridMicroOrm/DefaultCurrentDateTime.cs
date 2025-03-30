@@ -1,6 +1,4 @@
-using HybridMicroOrm.Contexts;
-
-namespace HybridMicroOrm.Internals;
+namespace HybridMicroOrm;
 
 internal class DefaultCurrentDateTime : ICurrentDateTime
 {

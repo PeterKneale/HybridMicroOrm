@@ -1,7 +1,7 @@
-using HybridMicroOrm.Contexts;
+using HybridMicroOrm.Contracts;
 using HybridMicroOrm.Tests.Contexts;
 
-namespace HybridMicroOrm.Tests;
+namespace HybridMicroOrm.Tests.Fixtures;
 
 [Collection(nameof(IntegrationTestCollection))]
 public class BaseTest : IAsyncLifetime

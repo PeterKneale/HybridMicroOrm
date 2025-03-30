@@ -1,4 +1,4 @@
-using HybridMicroOrm.Contexts;
+using HybridMicroOrm.Contracts;
 
 namespace HybridMicroOrm.Tests.Contexts;
 
