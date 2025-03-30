@@ -19,7 +19,7 @@ jobs:
           show-progress: 'false'
           
       - name: Update diagram
-        uses: githubocto/repo-visualizer@0.7.1
+        uses: githubocto/repo-visualizer@0.9.1
         with:
           output_file: "docs/diagram.svg"
           excluded_globs: "**/*.{png,jpg,md,http,sql,svg,yml,csproj,sln};"
