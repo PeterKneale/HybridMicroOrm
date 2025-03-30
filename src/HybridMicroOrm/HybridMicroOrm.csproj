@@ -2,6 +2,10 @@
 
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
+        <PackageId>HybridMicroOrm</PackageId>
+        <Version>0.0.1</Version>
+        <Authors>Peter Kneale</Authors>
+        <Product>HybridMicroOrm</Product>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>
