@@ -99,3 +99,8 @@ jobs:
 
       - name: Pack
         run: dotnet pack
+
+      - name: Push
+        run: |
+          dotnet nuget push HybridMicroOrm/bin/Release/*.nupkg --source github --api-key ${{ secrets.GITHUB_TOKEN }}
+          dotnet nuget push HybridMicroOrm.Contracts/bin/Release/*.nupkg --source github --api-key ${{ secrets.GITHUB_TOKEN }}
