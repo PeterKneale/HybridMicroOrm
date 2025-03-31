@@ -51,9 +51,9 @@ jobs:
       
       - name: Test
         run: |
-          dotnet test tests/HybridMicroOrm.Tests/         --no-build --verbosity normal --collect:"XPlat Code Coverage" --logger "trx;LogFileName=test-results.trx"
+          dotnet test tests/HybridMicroOrm.Tests/ --no-build --verbosity normal --collect:"XPlat Code Coverage" --logger "trx;LogFileName=test-results.trx"
         env:
-          DB_HOST: postgres
+          POSTGRES_HOST: postgres
           
       - name: Restore coverage history
         uses: dawidd6/action-download-artifact@v9
