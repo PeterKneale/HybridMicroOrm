@@ -100,6 +100,17 @@ jobs:
       - name: Pack
         run: dotnet pack
 
+      - name: Create Release
+        run: |
+          github-release-cli release \
+            --user ${{ github.repository_owner }} \
+            --repo ${{ github.event.repository.name }} \
+            --tag v${{ github.run_number }} \
+            --name "Release v${{ github.run_number }}" \
+            --description "Release v${{ github.run_number }}" \
+            --target_commitish ${{ github.sha }} \
+            --prerelease
+
       - name: Push
         run: |
           dotnet nuget push HybridMicroOrm/bin/Release/*.nupkg --source github --api-key ${{ secrets.GITHUB_TOKEN }}
