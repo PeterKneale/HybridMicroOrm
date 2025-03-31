@@ -10,6 +10,8 @@
         <Product>HybridMicroOrm</Product>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <PackageTags>postgres;sql;json;multi-tenant;saas;dapper;table;storage</PackageTags>
+        <MinVerTagPrefix>v</MinVerTagPrefix>
     </PropertyGroup>
 
     <ItemGroup>
