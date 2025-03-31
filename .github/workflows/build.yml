@@ -113,5 +113,5 @@ jobs:
 
       - name: Push
         run: |
-          dotnet nuget push HybridMicroOrm/bin/Release/*.nupkg --source github --api-key ${{ secrets.GITHUB_TOKEN }}
-          dotnet nuget push HybridMicroOrm.Contracts/bin/Release/*.nupkg --source github --api-key ${{ secrets.GITHUB_TOKEN }}
+          dotnet nuget push HybridMicroOrm/bin/Release/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_KEY }}
+          dotnet nuget push HybridMicroOrm.Contracts/bin/Release/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_KEY }}
