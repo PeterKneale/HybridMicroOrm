@@ -1,0 +1,1 @@
+# HybridMicroOrm.Contracts

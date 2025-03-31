@@ -3,6 +3,8 @@
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
         <PackageId>HybridMicroOrm</PackageId>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
         <Version>0.0.1</Version>
         <Authors>Peter Kneale</Authors>
         <Product>HybridMicroOrm</Product>
@@ -24,8 +26,12 @@
         <Using Include="Microsoft.Extensions.Options"/>
         <Using Include="Npgsql"/>
     </ItemGroup>
-
+    
     <ItemGroup>
       <ProjectReference Include="..\HybridMicroOrm.Contracts\HybridMicroOrm.Contracts.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\"/>
     </ItemGroup>
 </Project>
