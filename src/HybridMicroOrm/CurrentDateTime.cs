@@ -1,6 +1,6 @@
 namespace HybridMicroOrm;
 
-internal class DefaultCurrentDateTime : ICurrentDateTime
+internal class CurrentDateTime : ICurrentDateTime
 {
     public DateTime UtcNow => DateTime.UtcNow;
 }

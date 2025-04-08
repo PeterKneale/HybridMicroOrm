@@ -1,4 +1,3 @@
-using HybridMicroOrm.Contracts;
 using HybridMicroOrm.Tests.Contexts;
 
 namespace HybridMicroOrm.Tests.Fixtures;
@@ -20,7 +19,7 @@ public class BaseTest : IAsyncLifetime
     {
         await using var scope = _fixture.Services.CreateAsyncScope();
         var manager = scope.ServiceProvider.GetRequiredService<IHybridMicroOrmManager>();
-        await manager.Destroy();
+        await manager.Drop();
         await manager.Init();
     }
 

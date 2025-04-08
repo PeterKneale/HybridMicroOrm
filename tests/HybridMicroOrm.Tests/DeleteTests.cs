@@ -1,5 +1,3 @@
-using HybridMicroOrm.Contracts;
-
 namespace HybridMicroOrm.Tests;
 
 public class DeleteTests(IntegrationTestFixture fixture, ITestOutputHelper output) : BaseTest(fixture, output)
@@ -16,9 +14,9 @@ public class DeleteTests(IntegrationTestFixture fixture, ITestOutputHelper outpu
         // assert
         await Exec(x => x.Delete(_customerId), _tenantId, _userId);
 
-        var record1 = await Exec(x => x.Get(_customerId, includeDeleted: false), _tenantId, _userId);
+        var record1 = await Exec(x => x.Get(new GetRequest(_customerId) { IncludeDeleted = false }), _tenantId, _userId);
         record1.ShouldBeNull();
-        var record2 = await Exec(x => x.Get(_customerId, includeDeleted: true), _tenantId, _userId);
+        var record2 = await Exec(x => x.Get(new GetRequest(_customerId) { IncludeDeleted = true }), _tenantId, _userId);
         record2.ShouldBeNull();
     }
 
@@ -30,9 +28,9 @@ public class DeleteTests(IntegrationTestFixture fixture, ITestOutputHelper outpu
         // assert
         await Exec(x => x.SoftDelete(_customerId), _tenantId, _userId);
 
-        var record1 = await Exec(x => x.Get(_customerId, includeDeleted: false), _tenantId, _userId);
+        var record1 = await Exec(x => x.Get(new GetRequest(_customerId) { IncludeDeleted = false }), _tenantId, _userId);
         record1.ShouldBeNull();
-        var record2 = await Exec(x => x.Get(_customerId, includeDeleted: true), _tenantId, _userId);
+        var record2 = await Exec(x => x.Get(new GetRequest(_customerId) { IncludeDeleted = true }), _tenantId, _userId);
         record2.ShouldNotBeNull();
         record2.Id.ShouldBe(_customerId);
         record2.TenantId.ShouldBe(_tenantId);
@@ -48,9 +46,9 @@ public class DeleteTests(IntegrationTestFixture fixture, ITestOutputHelper outpu
         // assert
         await Exec(x => x.SoftDelete(_customerId));
 
-        var record1 = await Exec(x => x.Get(_customerId, includeDeleted: false));
+        var record1 = await Exec(x => x.Get(new GetRequest(_customerId) { IncludeDeleted = false }));
         record1.ShouldBeNull();
-        var record2 = await Exec(x => x.Get(_customerId, includeDeleted: true));
+        var record2 = await Exec(x => x.Get(new GetRequest(_customerId) { IncludeDeleted = true }));
         record2.ShouldNotBeNull();
         record2.Id.ShouldBe(_customerId);
         record2.DeletedAt.ShouldNotBeNull();
@@ -65,7 +63,7 @@ public class DeleteTests(IntegrationTestFixture fixture, ITestOutputHelper outpu
         // assert
         await Exec(x => x.SoftDelete(_customerId), _tenantId, _userId);
 
-        var record = await Exec(x => x.Get(_customerId), _tenantId, _userId);
+        var record = await Exec(x => x.Get(new GetRequest(_customerId)), _tenantId, _userId);
         record.ShouldBeNull();
     }
 
@@ -77,7 +75,7 @@ public class DeleteTests(IntegrationTestFixture fixture, ITestOutputHelper outpu
         // assert
         await Exec(x => x.SoftDelete(_customerId));
 
-        var record = await Exec(x => x.Get(_customerId), _tenantId, _userId);
+        var record = await Exec(x => x.Get(new GetRequest(_customerId)), _tenantId, _userId);
         record.ShouldNotBeNull();
         record.Id.ShouldBe(_customerId);
         record.TenantId.ShouldBe(_tenantId);

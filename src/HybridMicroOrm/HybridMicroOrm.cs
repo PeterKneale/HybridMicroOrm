@@ -6,10 +6,7 @@ internal class HybridMicroOrm(ITenantContext tenantContext, IUserContext userCon
 {
     private readonly HybridMicroOrmOptions _options = options.Value ?? throw new ArgumentNullException(nameof(options));
 
-    private NpgsqlConnection GetConnection()
-    {
-        return new NpgsqlConnection(_options.ConnectionString);
-    }
+    private NpgsqlConnection GetConnection() => new(_options.ConnectionString);
 
     public async Task Insert(InsertRequest request)
     {
@@ -32,18 +29,22 @@ internal class HybridMicroOrm(ITenantContext tenantContext, IUserContext userCon
         await connection.ExecuteAsync(sql, parameters);
     }
 
-    public async Task<Record?> Get(Guid id, bool includeDeleted = false)
+    public async Task<Record?> Get(Guid id) => await Get(new GetRequest(id));
+
+    public async Task<Record?> Get(GetRequest request)
     {
         var sql = $"""
                     SELECT * FROM {_options.TableName} 
                     WHERE {Id} = @Id 
+                    AND (@Type IS NULL OR {TypeColumn} = @Type) 
                     AND ({TenantId} IS NULL OR {TenantId} = @TenantId)
                     AND ({DeletedAt} IS NULL OR @IncludeDeleted = TRUE);
                    """;
         var parameters = new
         {
-            Id = id,
-            IncludeDeleted = includeDeleted,
+            Id = request.Id,
+            Type = request.Type,
+            IncludeDeleted = request.IncludeDeleted,
             tenantContext.TenantId
         };
         Log(sql, parameters);
