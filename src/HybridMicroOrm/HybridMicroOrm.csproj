@@ -5,7 +5,7 @@
         <PackageId>HybridMicroOrm</PackageId>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageReadmeFile>README.md</PackageReadmeFile>
-        <Version>0.0.1</Version>
+        <Version>0.0.3</Version>
         <Authors>Peter Kneale</Authors>
         <Product>HybridMicroOrm</Product>
         <ImplicitUsings>enable</ImplicitUsings>
@@ -35,7 +35,4 @@
       <ProjectReference Include="..\HybridMicroOrm.Contracts\HybridMicroOrm.Contracts.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-        <None Include="README.md" Pack="true" PackagePath="\"/>
-    </ItemGroup>
 </Project>

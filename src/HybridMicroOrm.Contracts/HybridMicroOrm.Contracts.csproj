@@ -5,7 +5,7 @@
         <PackageId>HybridMicroOrm.Contracts</PackageId>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageReadmeFile>README.md</PackageReadmeFile>
-        <Version>0.0.2</Version>
+        <Version>0.0.3</Version>
         <Authors>Peter Kneale</Authors>
         <Product>HybridMicroOrm.Contracts</Product>
         <ImplicitUsings>enable</ImplicitUsings>
