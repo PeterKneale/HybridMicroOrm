@@ -23,7 +23,7 @@ internal class HybridMicroOrmManager(IOptions<HybridMicroOrmOptions> options, IL
 
     private async Task<bool> Exists()
     {
-        log.LogInformation($"Checking if {_options.TableName} exists...");
+        log.LogInformation($"Checking if table {_options.TableName} exists...");
         const string sql = """
                             SELECT EXISTS (
                                 SELECT 1
