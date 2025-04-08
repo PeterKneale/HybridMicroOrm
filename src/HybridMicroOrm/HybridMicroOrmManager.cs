@@ -23,18 +23,19 @@ internal class HybridMicroOrmManager(IOptions<HybridMicroOrmOptions> options, IL
 
     private async Task<bool> Exists()
     {
-        log.LogInformation($"Checking if ${_options.TableName} exists...");
-        const string sql = $@"
-            SELECT EXISTS (
-                SELECT 1
-                FROM   information_schema.tables
-                WHERE  table_name   = @TableName
-            );";
+        log.LogInformation($"Checking if {_options.TableName} exists...");
+        const string sql = """
+                            SELECT EXISTS (
+                                SELECT 1
+                                FROM   information_schema.tables
+                                WHERE  table_name   = @TableName
+                            );
+                            """;
 
         await using var connection = GetConnection();
         return await connection.ExecuteScalarAsync<bool>(sql, new
         {
-            TableName = _options.TableName
+            _options.TableName
         });
     }
 
