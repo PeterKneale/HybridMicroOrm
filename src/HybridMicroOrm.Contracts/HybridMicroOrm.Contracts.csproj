@@ -2,14 +2,17 @@
 
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        
+        <Authors>Peter Kneale</Authors>
+        <Product>HybridMicroOrm.Contracts</Product>
+        
         <PackageId>HybridMicroOrm.Contracts</PackageId>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageReadmeFile>README.md</PackageReadmeFile>
-        <Version>0.0.3</Version>
-        <Authors>Peter Kneale</Authors>
-        <Product>HybridMicroOrm.Contracts</Product>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
+        <PackageTags>postgres;sql;json;multi-tenant;saas;dapper;table;storage</PackageTags>
+        <PackageVersion>0.0.3</PackageVersion>
     </PropertyGroup>
 
     <ItemGroup>

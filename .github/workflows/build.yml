@@ -49,8 +49,7 @@ jobs:
         run: dotnet build --no-restore
       
       - name: Test
-        run: |
-          dotnet test tests/HybridMicroOrm.Tests/ --no-build --verbosity normal --collect:"XPlat Code Coverage" --logger "trx;LogFileName=test-results.trx"
+        run: dotnet test tests/HybridMicroOrm.Tests/ --no-build --verbosity normal --collect:"XPlat Code Coverage" --logger "trx;LogFileName=test-results.trx"
         env:
           POSTGRES_HOST: postgres
           
@@ -100,6 +99,7 @@ jobs:
         run: dotnet pack
 
       - name: Push
-        run: |
-          dotnet nuget push src/HybridMicroOrm/bin/Release/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_KEY }}
-          dotnet nuget push src/HybridMicroOrm.Contracts/bin/Release/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_KEY }} --skip-duplicate
+        run: dotnet nuget push src/HybridMicroOrm/bin/Release/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_KEY }} --skip-duplicate
+      
+      - name: Push Contracts
+        run: dotnet nuget push src/HybridMicroOrm.Contracts/bin/Release/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_KEY }} --skip-duplicate
