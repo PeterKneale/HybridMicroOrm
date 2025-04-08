@@ -6,7 +6,6 @@ public static class DbConfigurationExtensions
 
     public static string GetDbConnectionString(this IConfiguration configuration)
     {
-        Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
         var username = configuration["POSTGRES_USER"] ?? "admin";
         var password = configuration["POSTGRES_PASSWORD"] ?? "password";
         var database = configuration["POSTGRES_DB"] ?? "db";
