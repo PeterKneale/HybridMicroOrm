@@ -54,7 +54,7 @@ jobs:
           POSTGRES_HOST: postgres
           
       - name: Restore coverage history
-        uses: dawidd6/action-download-artifact@v9
+        uses: dawidd6/action-download-artifact@v11
         with:
           name: CoverageHistory
           path: CoverageHistory
