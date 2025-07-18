@@ -322,17 +322,44 @@ The project includes a comprehensive CI/CD pipeline:
 Two packages are published:
 
 1. **HybridMicroOrm** ([NuGet](https://www.nuget.org/packages/HybridMicroOrm/))
-   - Main implementation
+   - Main implementation with full ORM functionality
    - Dependencies: Dapper, Npgsql, Newtonsoft.Json, Microsoft.Extensions.*
+   - Includes symbol package (.snupkg) for debugging
 
 2. **HybridMicroOrm.Contracts** ([NuGet](https://www.nuget.org/packages/HybridMicroOrm.Contracts/))
-   - Interfaces and contracts
-   - Minimal dependencies
+   - Interfaces and contracts only
+   - Minimal dependencies (only Newtonsoft.Json)
+   - Includes symbol package (.snupkg) for debugging
 
-### Versioning
-- **Strategy**: Uses MinVer for automatic semantic versioning
-- **Source Linking**: GitHub source linking enabled
-- **Current Version**: 1.0.6
+### Publishing Strategy
+
+The project follows NuGet packaging best practices:
+
+- **Automatic Versioning**: Uses [MinVer](https://github.com/adamralph/minver) for Git-based semantic versioning
+- **Conditional Publishing**: Packages are only published on GitHub releases, not every push
+- **Symbol Packages**: Debugging symbols (.snupkg) are published alongside main packages
+- **Package Validation**: Comprehensive validation before publishing including vulnerability scanning
+- **Rich Metadata**: Complete package descriptions, repository URLs, and release notes
+
+### Creating Releases
+
+To publish a new version:
+
+1. Create and push a semantic version tag: `git tag v1.0.0 && git push origin v1.0.0`
+2. Create a GitHub release with release notes
+3. The CI/CD pipeline automatically validates and publishes packages
+
+See [PACKAGING.md](PACKAGING.md) for detailed publishing guidelines.
+
+### Local Package Validation
+
+Use the included validation script to test packages locally:
+
+```bash
+./scripts/validate-packages.sh
+```
+
+This script performs the same validations as the CI/CD pipeline.
 
 ### Package Configuration
 ```xml
@@ -341,6 +368,16 @@ Two packages are published:
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageTags>postgres;sql;json;multi-tenant;saas;dapper;table;storage</PackageTags>
+    <PackageDescription>A lightweight, JSON-based micro ORM for PostgreSQL with built-in multi-tenant support</PackageDescription>
+    <RepositoryUrl>https://github.com/PeterKneale/HybridMicroOrm</RepositoryUrl>
+    
+    <!-- MinVer automatic versioning -->
+    <MinVerDefaultPreReleaseIdentifiers>alpha</MinVerDefaultPreReleaseIdentifiers>
+    <MinVerTagPrefix>v</MinVerTagPrefix>
+    
+    <!-- Symbol packages for debugging -->
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
 </PropertyGroup>
 ```
 
