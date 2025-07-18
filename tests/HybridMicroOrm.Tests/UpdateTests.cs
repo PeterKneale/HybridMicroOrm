@@ -16,7 +16,7 @@ public class UpdateTests(IntegrationTestFixture fixture, ITestOutputHelper outpu
         await ExecTenant1User1(x => x.Update(CreateUpdateRequest()));
 
         // assert
-        var record = await ExecTenant1User1(x => x.Get(_customerId));
+        var record = await ExecTenant1User1(x => x.Get<User>(_customerId));
         record.ShouldNotBeNull();
         record.Id.ShouldBe(_customerId);
         record.TenantId.ShouldBe(Tenant1.TenantId);
@@ -35,7 +35,7 @@ public class UpdateTests(IntegrationTestFixture fixture, ITestOutputHelper outpu
         await Exec(x => x.Update(CreateUpdateRequest()));
 
         // assert
-        var record = await ExecTenant1User1(x => x.Get(_customerId));
+        var record = await ExecTenant1User1(x => x.Get<User>(_customerId));
         record.ShouldNotBeNull();
         record.Id.ShouldBe(_customerId);
         record.TenantId.ShouldBe(Tenant1.TenantId);

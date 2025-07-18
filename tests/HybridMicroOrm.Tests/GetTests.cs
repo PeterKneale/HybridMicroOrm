@@ -10,13 +10,17 @@ public class GetTests(IntegrationTestFixture fixture, ITestOutputHelper output) 
         await ExecTenant1User1(x => x.Insert(CreateInsertRequest(customerId)));
 
         // act
-        var record = await ExecTenant1User1(x => x.Get(customerId));
+        var record = await ExecTenant1User1(x => x.Get<User>(customerId));
 
         // assert
         record.ShouldNotBeNull();
         record.Id.ShouldBe(customerId);
         record.TenantId.ShouldBe(Tenant1.TenantId);
         record.CreatedBy.ShouldBe(Tenant1.UserId1);
+        record.Data.ShouldNotBeNull();
+        record.Data.Id.ShouldBe(customerId);
+        record.Data.Name.ShouldBe("John Doe");
+        record.Data.Email.ShouldBe("user@example.com");
     }
 
     [Fact]
@@ -29,7 +33,7 @@ public class GetTests(IntegrationTestFixture fixture, ITestOutputHelper output) 
         await ExecTenant1User1(x => x.Insert(CreateInsertRequest(customerId)));
 
         // assert
-        var record = await Exec(x => x.Get(customerId));
+        var record = await Exec(x => x.Get<User>(customerId));
         record.ShouldBeNull();
     }
 
@@ -43,7 +47,7 @@ public class GetTests(IntegrationTestFixture fixture, ITestOutputHelper output) 
         await ExecTenant1User1(x => x.Insert(CreateInsertRequest(customerId)));
 
         // assert
-        var record = await ExecTenant2User1(x => x.Get(customerId));
+        var record = await ExecTenant2User1(x => x.Get<User>(customerId));
         record.ShouldBeNull();
     }
 
@@ -57,7 +61,7 @@ public class GetTests(IntegrationTestFixture fixture, ITestOutputHelper output) 
         await ExecTenant1User1(x => x.Insert(CreateInsertRequest(customerId, isTenantData: false)));
 
         // assert
-        var record = await ExecTenant1User1(x => x.Get(customerId));
+        var record = await ExecTenant1User1(x => x.Get<User>(customerId));
         record.ShouldNotBeNull();
         record.Id.ShouldBe(customerId);
         record.TenantId.ShouldBeNull();
@@ -74,7 +78,7 @@ public class GetTests(IntegrationTestFixture fixture, ITestOutputHelper output) 
         await ExecTenant1User1(x => x.Insert(CreateInsertRequest(customerId, isTenantData: false)));
 
         // assert
-        var record = await Exec(x => x.Get(customerId));
+        var record = await Exec(x => x.Get<User>(customerId));
         record.ShouldNotBeNull();
         record.Id.ShouldBe(customerId);
         record.TenantId.ShouldBeNull();
@@ -91,7 +95,7 @@ public class GetTests(IntegrationTestFixture fixture, ITestOutputHelper output) 
         await Exec(x => x.Insert(CreateInsertRequest(customerId, isTenantData: false)));
 
         // assert
-        var record = await Exec(x => x.Get(customerId));
+        var record = await Exec(x => x.Get<User>(customerId));
         record.ShouldNotBeNull();
         record.Id.ShouldBe(customerId);
         record.TenantId.ShouldBeNull();
@@ -108,7 +112,7 @@ public class GetTests(IntegrationTestFixture fixture, ITestOutputHelper output) 
         await Exec(x => x.Insert(CreateInsertRequest(customerId, isTenantData: false)));
 
         // assert
-        var record = await ExecTenant1User1(x => x.Get(customerId));
+        var record = await ExecTenant1User1(x => x.Get<User>(customerId));
         record.ShouldNotBeNull();
         record.Id.ShouldBe(customerId);
         record.TenantId.ShouldBeNull();
@@ -129,7 +133,7 @@ public class GetTests(IntegrationTestFixture fixture, ITestOutputHelper output) 
         await ExecTenant1User1(x => x.Insert(CreateInsertRequest(customerId)));
 
         // act
-        var record = await ExecTenant1User1(x => x.Get(customerId.ToString()));
+        var record = await ExecTenant1User1(x => x.Get<User>(customerId.ToString()));
 
         // assert
         record.ShouldNotBeNull();
@@ -145,7 +149,7 @@ public class GetTests(IntegrationTestFixture fixture, ITestOutputHelper output) 
         var nonExistentId = Guid.NewGuid();
 
         // act
-        var record = await ExecTenant1User1(x => x.Get(nonExistentId.ToString()));
+        var record = await ExecTenant1User1(x => x.Get<User>(nonExistentId.ToString()));
 
         // assert
         record.ShouldBeNull();
@@ -159,7 +163,7 @@ public class GetTests(IntegrationTestFixture fixture, ITestOutputHelper output) 
 
         // act & assert
         var exception = await Should.ThrowAsync<ArgumentException>(async () =>
-            await ExecTenant1User1(x => x.Get(invalidGuid)));
+            await ExecTenant1User1(x => x.Get<User>(invalidGuid)));
         
         exception.ParamName.ShouldBe("id");
         exception.Message.ShouldContain("not a valid GUID format");
@@ -170,7 +174,7 @@ public class GetTests(IntegrationTestFixture fixture, ITestOutputHelper output) 
     {
         // act & assert
         var exception = await Should.ThrowAsync<ArgumentException>(async () =>
-            await ExecTenant1User1(x => x.Get((string)null!)));
+            await ExecTenant1User1(x => x.Get<User>((string)null!)));
         
         exception.ParamName.ShouldBe("id");
         exception.Message.ShouldContain("cannot be null, empty, or whitespace");
@@ -181,7 +185,7 @@ public class GetTests(IntegrationTestFixture fixture, ITestOutputHelper output) 
     {
         // act & assert
         var exception = await Should.ThrowAsync<ArgumentException>(async () =>
-            await ExecTenant1User1(x => x.Get("")));
+            await ExecTenant1User1(x => x.Get<User>("")));
         
         exception.ParamName.ShouldBe("id");
         exception.Message.ShouldContain("cannot be null, empty, or whitespace");
@@ -192,7 +196,7 @@ public class GetTests(IntegrationTestFixture fixture, ITestOutputHelper output) 
     {
         // act & assert
         var exception = await Should.ThrowAsync<ArgumentException>(async () =>
-            await ExecTenant1User1(x => x.Get("   ")));
+            await ExecTenant1User1(x => x.Get<User>("   ")));
         
         exception.ParamName.ShouldBe("id");
         exception.Message.ShouldContain("cannot be null, empty, or whitespace");
