@@ -27,19 +27,19 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Dapper" Version="[2.1.1,2.2)" />
-        <PackageReference Include="Microsoft.Extensions.Options" Version="[8.0.0,9.0.0)"/>
+        <PackageReference Include="Dapper" Version="[2.1.66, 2.2.0)" />
+        <PackageReference Include="Microsoft.Extensions.Options" Version="9.0.7" />
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
         <PackageReference Include="MinVer" Version="6.0.0" PrivateAssets="All" />
-        <PackageReference Include="Npgsql" Version="[9.0,10.0)"/>
+        <PackageReference Include="Npgsql" Version="[9.0.3, 10.0.0)" />
     </ItemGroup>
 
     <ItemGroup>
-        <Using Include="Dapper"/>
-        <Using Include="HybridMicroOrm.Contracts"/>
-        <Using Include="Microsoft.Extensions.Logging"/>
-        <Using Include="Microsoft.Extensions.Options"/>
-        <Using Include="Npgsql"/>
+        <Using Include="Dapper" />
+        <Using Include="HybridMicroOrm.Contracts" />
+        <Using Include="Microsoft.Extensions.Logging" />
+        <Using Include="Microsoft.Extensions.Options" />
+        <Using Include="Npgsql" />
     </ItemGroup>
     
     <ItemGroup>
@@ -47,6 +47,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Include="README.md" Pack="true" PackagePath="\"/>
+        <None Include="README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
 </Project>
