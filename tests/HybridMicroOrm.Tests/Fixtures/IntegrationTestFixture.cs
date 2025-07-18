@@ -12,6 +12,7 @@ public class IntegrationTestFixture : MartinCostello.Logging.XUnit.ITestOutputHe
             .Build();
 
         Services = new ServiceCollection()
+            .AddSingleton<IJsonConverter, NewtonsoftJsonConverter>()
             .AddHybridMicroOrm(x =>
             {
                 x.ConnectionString = Configuration.GetDbConnectionString();

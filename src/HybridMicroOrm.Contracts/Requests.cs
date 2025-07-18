@@ -1,5 +1,3 @@
-using Newtonsoft.Json;
-
 namespace HybridMicroOrm.Contracts;
 
 public class GetRequest
@@ -27,9 +25,9 @@ public class UpdateRequest
     public string Type { get; }
     public string Data { get; }
 
-    public static UpdateRequest Create(Guid id, string type, object data)
+    public static UpdateRequest Create(Guid id, string type, object data, IJsonConverter jsonConverter)
     {
-        return new UpdateRequest(id, type, JsonConvert.SerializeObject(data));
+        return new UpdateRequest(id, type, jsonConverter.Serialize(data));
     }
 }
 
@@ -48,9 +46,9 @@ public record InsertRequest
     public string Data { get; }
     public bool IsTenantData { get; }
 
-    public static InsertRequest Create(Guid id, string type, object data, bool isTenantData = true)
+    public static InsertRequest Create(Guid id, string type, object data, IJsonConverter jsonConverter, bool isTenantData = true)
     {
-        var jsonData = JsonConvert.SerializeObject(data);
+        var jsonData = jsonConverter.Serialize(data);
         return new InsertRequest(id, type, jsonData, isTenantData);
     }
 }

@@ -74,11 +74,11 @@ public class ListTests(IntegrationTestFixture fixture, ITestOutputHelper output)
         InsertRequest.Create(customerId, User.Type, new User
         {
             Id = customerId, Name = "John Doe", Email = "user@example.com"
-        });
+        }, JsonConverter);
 
     private InsertRequest CreateInsertCarRequest(Guid carId) =>
         InsertRequest.Create(carId, Car.Type, new Car
         {
             Id = carId, Make = "Toyota", Model = "Corolla"
-        });
+        }, JsonConverter);
 }

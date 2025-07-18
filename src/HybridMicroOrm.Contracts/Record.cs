@@ -1,5 +1,3 @@
-using Newtonsoft.Json;
-
 namespace HybridMicroOrm.Contracts;
 
 public class Record
@@ -19,5 +17,5 @@ public class Record
     public DateTime? DeletedAt { get; set; }
     public Guid? DeletedBy { get; set; }
 
-    public T Get<T>() => JsonConvert.DeserializeObject<T>(Data)!;
+    public T Get<T>(IJsonConverter jsonConverter) => jsonConverter.Deserialize<T>(Data);
 }

@@ -36,7 +36,7 @@ public class FilterTests(IntegrationTestFixture fixture, ITestOutputHelper outpu
         await ExecUser1(x => x.Insert(InsertRequest.Create(id, Car.Type, new Car
         {
             Id = id, Make = make, Model = model
-        })));
+        }, JsonConverter)));
         return id;
     }
 }

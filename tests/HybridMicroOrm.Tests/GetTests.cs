@@ -119,7 +119,7 @@ public class GetTests(IntegrationTestFixture fixture, ITestOutputHelper output) 
         InsertRequest.Create(customerId, "customer", new User
         {
             Id = customerId, Name = "John Doe", Email = "user@example.com"
-        }, isTenantData);
+        }, JsonConverter, isTenantData);
 
     [Fact]
     public async Task Test_get_with_valid_guid_string_returns_record()

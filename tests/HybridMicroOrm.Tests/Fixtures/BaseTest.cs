@@ -7,6 +7,7 @@ public class BaseTest : IAsyncLifetime
 {
     private readonly IntegrationTestFixture _fixture;
     protected readonly ITestOutputHelper Output;
+    protected IJsonConverter JsonConverter => _fixture.Services.GetRequiredService<IJsonConverter>();
 
     protected BaseTest(IntegrationTestFixture fixture, ITestOutputHelper output)
     {
