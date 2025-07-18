@@ -120,4 +120,81 @@ public class GetTests(IntegrationTestFixture fixture, ITestOutputHelper output) 
         {
             Id = customerId, Name = "John Doe", Email = "user@example.com"
         }, isTenantData);
+
+    [Fact]
+    public async Task Test_get_with_valid_guid_string_returns_record()
+    {
+        // arrange
+        var customerId = Guid.NewGuid();
+        await ExecTenant1User1(x => x.Insert(CreateInsertRequest(customerId)));
+
+        // act
+        var record = await ExecTenant1User1(x => x.Get(customerId.ToString()));
+
+        // assert
+        record.ShouldNotBeNull();
+        record.Id.ShouldBe(customerId);
+        record.TenantId.ShouldBe(Tenant1.TenantId);
+        record.CreatedBy.ShouldBe(Tenant1.UserId1);
+    }
+
+    [Fact]
+    public async Task Test_get_with_valid_guid_string_for_nonexistent_record_returns_null()
+    {
+        // arrange
+        var nonExistentId = Guid.NewGuid();
+
+        // act
+        var record = await ExecTenant1User1(x => x.Get(nonExistentId.ToString()));
+
+        // assert
+        record.ShouldBeNull();
+    }
+
+    [Fact]
+    public async Task Test_get_with_invalid_guid_string_throws_argument_exception()
+    {
+        // arrange
+        const string invalidGuid = "not-a-valid-guid";
+
+        // act & assert
+        var exception = await Should.ThrowAsync<ArgumentException>(async () =>
+            await ExecTenant1User1(x => x.Get(invalidGuid)));
+        
+        exception.ParamName.ShouldBe("id");
+        exception.Message.ShouldContain("not a valid GUID format");
+    }
+
+    [Fact]
+    public async Task Test_get_with_null_string_throws_argument_exception()
+    {
+        // act & assert
+        var exception = await Should.ThrowAsync<ArgumentException>(async () =>
+            await ExecTenant1User1(x => x.Get((string)null!)));
+        
+        exception.ParamName.ShouldBe("id");
+        exception.Message.ShouldContain("cannot be null, empty, or whitespace");
+    }
+
+    [Fact]
+    public async Task Test_get_with_empty_string_throws_argument_exception()
+    {
+        // act & assert
+        var exception = await Should.ThrowAsync<ArgumentException>(async () =>
+            await ExecTenant1User1(x => x.Get("")));
+        
+        exception.ParamName.ShouldBe("id");
+        exception.Message.ShouldContain("cannot be null, empty, or whitespace");
+    }
+
+    [Fact]
+    public async Task Test_get_with_whitespace_string_throws_argument_exception()
+    {
+        // act & assert
+        var exception = await Should.ThrowAsync<ArgumentException>(async () =>
+            await ExecTenant1User1(x => x.Get("   ")));
+        
+        exception.ParamName.ShouldBe("id");
+        exception.Message.ShouldContain("cannot be null, empty, or whitespace");
+    }
 }
