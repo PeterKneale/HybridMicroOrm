@@ -42,11 +42,11 @@ public class DateTimeTests(IntegrationTestFixture fixture, ITestOutputHelper out
         InsertRequest.Create(customerId, "customer", new User
         {
             Id = customerId, Name = "John Doe", Email = "user@example.com"
-        }, JsonConverter, isTenantData);
+        }, isTenantData);
     
     private UpdateRequest CreateUpdateRequest(Guid customerId) =>
         UpdateRequest.Create(customerId, "customer", new User
         {
             Id = customerId, Name = "John Doe", Email = "user@example.com"
-        }, JsonConverter);
+        });
 }

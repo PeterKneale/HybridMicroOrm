@@ -14,7 +14,7 @@ public class GetRequest
 
 public class UpdateRequest
 {
-    private UpdateRequest(Guid id, string type, string data)
+    private UpdateRequest(Guid id, string type, object data)
     {
         Id = id;
         Type = type;
@@ -23,17 +23,17 @@ public class UpdateRequest
 
     public Guid Id { get; }
     public string Type { get; }
-    public string Data { get; }
+    public object Data { get; }
 
-    public static UpdateRequest Create(Guid id, string type, object data, IJsonConverter jsonConverter)
+    public static UpdateRequest Create(Guid id, string type, object data)
     {
-        return new UpdateRequest(id, type, jsonConverter.Serialize(data));
+        return new UpdateRequest(id, type, data);
     }
 }
 
 public record InsertRequest
 {
-    private InsertRequest(Guid id, string type, string data, bool isTenantData)
+    private InsertRequest(Guid id, string type, object data, bool isTenantData)
     {
         Id = id;
         Type = type;
@@ -43,13 +43,12 @@ public record InsertRequest
 
     public Guid Id { get; }
     public string Type { get; }
-    public string Data { get; }
+    public object Data { get; }
     public bool IsTenantData { get; }
 
-    public static InsertRequest Create(Guid id, string type, object data, IJsonConverter jsonConverter, bool isTenantData = true)
+    public static InsertRequest Create(Guid id, string type, object data, bool isTenantData = true)
     {
-        var jsonData = jsonConverter.Serialize(data);
-        return new InsertRequest(id, type, jsonData, isTenantData);
+        return new InsertRequest(id, type, data, isTenantData);
     }
 }
 
