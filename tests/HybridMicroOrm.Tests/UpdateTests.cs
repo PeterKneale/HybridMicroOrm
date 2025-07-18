@@ -48,11 +48,11 @@ public class UpdateTests(IntegrationTestFixture fixture, ITestOutputHelper outpu
         InsertRequest.Create(_customerId, "customer", new User
         {
             Id = _customerId, Name = "John Doe", Email = "user@example.com"
-        }, JsonConverter);
+        });
 
     private UpdateRequest CreateUpdateRequest() =>
         UpdateRequest.Create(_customerId, "customer", new User
         {
             Id = _customerId, Name = "John Doe2", Email = "user2@example.com"
-        }, JsonConverter);
+        });
 }

@@ -2,9 +2,10 @@ using static HybridMicroOrm.Constants;
 
 namespace HybridMicroOrm;
 
-internal class HybridMicroOrm(ITenantContext tenantContext, IUserContext userContext, ICurrentDateTime currentDateTime, IOptions<HybridMicroOrmOptions> options, ILogger<HybridMicroOrm> log) : IHybridMicroOrm
+internal class HybridMicroOrm(ITenantContext tenantContext, IUserContext userContext, ICurrentDateTime currentDateTime, IOptions<HybridMicroOrmOptions> options, IJsonConverter jsonConverter, ILogger<HybridMicroOrm> log) : IHybridMicroOrm
 {
     private readonly HybridMicroOrmOptions _options = options.Value ?? throw new ArgumentNullException(nameof(options));
+    private readonly IJsonConverter _jsonConverter = jsonConverter ?? throw new ArgumentNullException(nameof(jsonConverter));
 
     private NpgsqlConnection GetConnection() => new(_options.ConnectionString);
 
@@ -18,7 +19,7 @@ internal class HybridMicroOrm(ITenantContext tenantContext, IUserContext userCon
         {
             request.Id,
             request.Type,
-            request.Data,
+            Data = _jsonConverter.Serialize(request.Data),
             CreatedAt = currentDateTime.UtcNow,
             CreatedBy = userContext.UserId,
             TenantId = request.IsTenantData ? tenantContext.TenantId : null
@@ -31,6 +32,12 @@ internal class HybridMicroOrm(ITenantContext tenantContext, IUserContext userCon
 
     public async Task<Record?> Get(Guid id) => await Get(new GetRequest(id));
 
+    public async Task<T?> Get<T>(Guid id)
+    {
+        var record = await Get(id);
+        return record == null ? default(T) : _jsonConverter.Deserialize<T>(record.Data);
+    }
+
     public async Task<Record?> Get(string id)
     {
         if (string.IsNullOrWhiteSpace(id))
@@ -40,6 +47,12 @@ internal class HybridMicroOrm(ITenantContext tenantContext, IUserContext userCon
             throw new ArgumentException($"ID '{id}' is not a valid GUID format.", nameof(id));
 
         return await Get(guidId);
+    }
+
+    public async Task<T?> Get<T>(string id)
+    {
+        var record = await Get(id);
+        return record == null ? default(T) : _jsonConverter.Deserialize<T>(record.Data);
     }
 
     public async Task<Record?> Get(GetRequest request)
@@ -61,6 +74,12 @@ internal class HybridMicroOrm(ITenantContext tenantContext, IUserContext userCon
         Log(sql, parameters);
         await using var connection = GetConnection();
         return await connection.QuerySingleOrDefaultAsync<Record>(sql, parameters);
+    }
+
+    public async Task<T?> Get<T>(GetRequest request)
+    {
+        var record = await Get(request);
+        return record == null ? default(T) : _jsonConverter.Deserialize<T>(record.Data);
     }
 
     public async Task<IEnumerable<Record>> List(ListRequest request)
@@ -87,6 +106,12 @@ internal class HybridMicroOrm(ITenantContext tenantContext, IUserContext userCon
         Log(sql, parameters);
         await using var connection = GetConnection();
         return await connection.QueryAsync<Record>(sql, parameters);
+    }
+
+    public async Task<IEnumerable<T>> List<T>(ListRequest request)
+    {
+        var records = await List(request);
+        return records.Select(record => _jsonConverter.Deserialize<T>(record.Data));
     }
 
     private static object MergeFilterIntoParameters(Filter filter, object parameters)
@@ -120,7 +145,7 @@ internal class HybridMicroOrm(ITenantContext tenantContext, IUserContext userCon
         {
             request.Id,
             request.Type,
-            request.Data,
+            Data = _jsonConverter.Serialize(request.Data),
             UpdatedAt = currentDateTime.UtcNow,
             UpdatedBy = userContext.UserId,
             tenantContext.TenantId

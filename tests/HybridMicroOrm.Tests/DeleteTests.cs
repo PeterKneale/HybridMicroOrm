@@ -87,5 +87,5 @@ public class DeleteTests(IntegrationTestFixture fixture, ITestOutputHelper outpu
         InsertRequest.Create(_customerId, "customer", new User
         {
             Id = _customerId, Name = "John Doe", Email = "user@example.com"
-        }, JsonConverter, isTenantData);
+        }, isTenantData);
 }
