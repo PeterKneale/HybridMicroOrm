@@ -221,6 +221,7 @@ var request = InsertRequest.Create(
     id: Guid.NewGuid(),
     type: "product",
     data: productObject,
+    jsonConverter: jsonConverter,
     isTenantData: true // Set to false for shared data
 );
 ```
@@ -235,7 +236,8 @@ Task Update(UpdateRequest request)
 var request = UpdateRequest.Create(
     id: existingId,
     type: "product",
-    data: updatedProductObject
+    data: updatedProductObject,
+    jsonConverter: jsonConverter
 );
 ```
 
@@ -319,10 +321,10 @@ public interface ITenantContext
 ### Tenant Data vs Shared Data
 ```csharp
 // Tenant-specific data (default)
-var tenantRequest = InsertRequest.Create(id, "order", order, isTenantData: true);
+var tenantRequest = InsertRequest.Create(id, "order", order, jsonConverter, isTenantData: true);
 
-// Shared data (accessible to all tenants)
-var sharedRequest = InsertRequest.Create(id, "config", config, isTenantData: false);
+// Shared data (accessible to all tenants)  
+var sharedRequest = InsertRequest.Create(id, "config", config, jsonConverter, isTenantData: false);
 ```
 
 ### Database Schema
