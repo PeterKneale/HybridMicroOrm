@@ -187,6 +187,11 @@ Task<Record?> Get(string id)
 
 // Get with additional options
 Task<Record?> Get(GetRequest request)
+
+// Get strongly-typed objects directly
+Task<T?> Get<T>(Guid id)
+Task<T?> Get<T>(string id)
+Task<T?> Get<T>(GetRequest request)
 ```
 
 **GetRequest Options:**
@@ -197,6 +202,9 @@ Task<Record?> Get(GetRequest request)
 #### List Operations
 ```csharp
 Task<IEnumerable<Record>> List(ListRequest request)
+
+// Get strongly-typed objects directly
+Task<IEnumerable<T>> List<T>(ListRequest request)
 ```
 
 **ListRequest Options:**
@@ -217,7 +225,6 @@ var request = InsertRequest.Create(
     id: Guid.NewGuid(),
     type: "product",
     data: productObject,
-    jsonConverter: jsonConverter,
     isTenantData: true // Set to false for shared data
 );
 ```
@@ -232,8 +239,7 @@ Task Update(UpdateRequest request)
 var request = UpdateRequest.Create(
     id: existingId,
     type: "product",
-    data: updatedProductObject,
-    jsonConverter: jsonConverter
+    data: updatedProductObject
 );
 ```
 
@@ -263,9 +269,6 @@ public class Record
     public Guid? UpdatedBy { get; set; }
     public DateTime? DeletedAt { get; set; }
     public Guid? DeletedBy { get; set; }
-
-    // Type-safe deserialization using IJsonConverter
-    public T Get<T>(IJsonConverter jsonConverter) => jsonConverter.Deserialize<T>(Data);
 }
 ```
 
