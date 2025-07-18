@@ -147,18 +147,16 @@ public class SystemTextJsonConverter : IJsonConverter
 public class CustomerService
 {
     private readonly IHybridMicroOrm _orm;
-    private readonly IJsonConverter _jsonConverter;
 
-    public CustomerService(IHybridMicroOrm orm, IJsonConverter jsonConverter)
+    public CustomerService(IHybridMicroOrm orm)
     {
         _orm = orm;
-        _jsonConverter = jsonConverter;
     }
 
     public async Task<Customer?> GetCustomer(Guid id)
     {
-        var record = await _orm.Get(id);
-        return record?.Get<Customer>(_jsonConverter);
+        var record = await _orm.Get<Customer>(id);
+        return record?.Data;
     }
 
     public async Task CreateCustomer(Customer customer)
@@ -183,13 +181,13 @@ The main interface provides CRUD operations:
 #### Get Operations
 ```csharp
 // Get by GUID
-Task<Record?> Get(Guid id)
+Task<Record<T>?> Get<T>(Guid id)
 
 // Get by string ID (converts to GUID)
-Task<Record?> Get(string id)
+Task<Record<T>?> Get<T>(string id)
 
 // Get with additional options
-Task<Record?> Get(GetRequest request)
+Task<Record<T>?> Get<T>(GetRequest request)
 ```
 
 **GetRequest Options:**
@@ -199,7 +197,7 @@ Task<Record?> Get(GetRequest request)
 
 #### List Operations
 ```csharp
-Task<IEnumerable<Record>> List(ListRequest request)
+Task<IEnumerable<Record<T>>> List<T>(ListRequest request)
 ```
 
 **ListRequest Options:**
@@ -247,28 +245,27 @@ Task Delete(Guid id)
 Task SoftDelete(Guid id)
 ```
 
-### Record Class
+### Record<T> Class
 
-The returned `Record` object provides:
+The returned `Record<T>` object provides:
 
 ```csharp
-public class Record
+public class Record<T>
 {
     public Guid Id { get; init; }
     public Guid? TenantId { get; init; }
     public string Type { get; set; }
-    public string Data { get; set; }
+    public T Data { get; set; }  // Strongly-typed deserialized data
     public DateTime CreatedAt { get; init; }
     public Guid? CreatedBy { get; init; }
     public DateTime? UpdatedAt { get; set; }
     public Guid? UpdatedBy { get; set; }
     public DateTime? DeletedAt { get; set; }
     public Guid? DeletedBy { get; set; }
-
-    // Type-safe deserialization using IJsonConverter
-    public T Get<T>(IJsonConverter jsonConverter) => jsonConverter.Deserialize<T>(Data);
 }
 ```
+
+The `Data` property contains the automatically deserialized object of type `T` using the configured `IJsonConverter`.
 
 ## Difference Between ORM and ORM Manager
 
@@ -499,13 +496,14 @@ public async Task Test_tenant_record_can_be_read_with_tenant_context()
     await ExecTenant1User1(x => x.Insert(CreateInsertRequest(customerId)));
 
     // act
-    var record = await ExecTenant1User1(x => x.Get(customerId));
+    var record = await ExecTenant1User1(x => x.Get<Customer>(customerId));
 
     // assert
     record.ShouldNotBeNull();
     record.Id.ShouldBe(customerId);
     record.TenantId.ShouldBe(Tenant1.TenantId);
     record.CreatedBy.ShouldBe(Tenant1.UserId1);
+    record.Data.Id.ShouldBe(customerId); // Access strongly-typed data
 }
 ```
 
