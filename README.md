@@ -147,15 +147,18 @@ public class SystemTextJsonConverter : IJsonConverter
 public class CustomerService
 {
     private readonly IHybridMicroOrm _orm;
+    private readonly IJsonConverter _jsonConverter;
 
-    public CustomerService(IHybridMicroOrm orm)
+    public CustomerService(IHybridMicroOrm orm, IJsonConverter jsonConverter)
     {
         _orm = orm;
+        _jsonConverter = jsonConverter;
     }
 
     public async Task<Customer?> GetCustomer(Guid id)
     {
-        return await _orm.Get<Customer>(id);
+        var record = await _orm.Get(id);
+        return record?.Get<Customer>(_jsonConverter);
     }
 
     public async Task CreateCustomer(Customer customer)
@@ -187,11 +190,6 @@ Task<Record?> Get(string id)
 
 // Get with additional options
 Task<Record?> Get(GetRequest request)
-
-// Get strongly-typed objects directly
-Task<T?> Get<T>(Guid id)
-Task<T?> Get<T>(string id)
-Task<T?> Get<T>(GetRequest request)
 ```
 
 **GetRequest Options:**
@@ -202,9 +200,6 @@ Task<T?> Get<T>(GetRequest request)
 #### List Operations
 ```csharp
 Task<IEnumerable<Record>> List(ListRequest request)
-
-// Get strongly-typed objects directly
-Task<IEnumerable<T>> List<T>(ListRequest request)
 ```
 
 **ListRequest Options:**
@@ -269,6 +264,9 @@ public class Record
     public Guid? UpdatedBy { get; set; }
     public DateTime? DeletedAt { get; set; }
     public Guid? DeletedBy { get; set; }
+
+    // Type-safe deserialization using IJsonConverter
+    public T Get<T>(IJsonConverter jsonConverter) => jsonConverter.Deserialize<T>(Data);
 }
 ```
 
@@ -320,10 +318,10 @@ public interface ITenantContext
 ### Tenant Data vs Shared Data
 ```csharp
 // Tenant-specific data (default)
-var tenantRequest = InsertRequest.Create(id, "order", order, jsonConverter, isTenantData: true);
+var tenantRequest = InsertRequest.Create(id, "order", order, isTenantData: true);
 
 // Shared data (accessible to all tenants)  
-var sharedRequest = InsertRequest.Create(id, "config", config, jsonConverter, isTenantData: false);
+var sharedRequest = InsertRequest.Create(id, "config", config, isTenantData: false);
 ```
 
 ### Database Schema

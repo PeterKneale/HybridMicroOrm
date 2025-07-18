@@ -16,4 +16,6 @@ public class Record
     
     public DateTime? DeletedAt { get; set; }
     public Guid? DeletedBy { get; set; }
+
+    public T Get<T>(IJsonConverter jsonConverter) => jsonConverter.Deserialize<T>(Data);
 }
