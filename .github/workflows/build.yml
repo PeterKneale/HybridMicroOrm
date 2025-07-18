@@ -17,7 +17,7 @@ jobs:
       pull-requests: write
       checks: write
       
-    container: mcr.microsoft.com/dotnet/sdk:8.0
+    container: mcr.microsoft.com/dotnet/sdk:9.0
 
     services:
       postgres:
@@ -42,7 +42,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 8.0.x
+          dotnet-version: 9.0.x
 
       - name: Restore dependencies
         run: dotnet restore
@@ -97,7 +97,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 8.0.x
+          dotnet-version: 9.0.x
 
       - name: Install MinVer tool
         run: dotnet tool install -g minver-cli
