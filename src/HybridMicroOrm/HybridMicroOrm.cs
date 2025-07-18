@@ -31,6 +31,17 @@ internal class HybridMicroOrm(ITenantContext tenantContext, IUserContext userCon
 
     public async Task<Record?> Get(Guid id) => await Get(new GetRequest(id));
 
+    public async Task<Record?> Get(string id)
+    {
+        if (string.IsNullOrWhiteSpace(id))
+            throw new ArgumentException("ID cannot be null, empty, or whitespace.", nameof(id));
+
+        if (!Guid.TryParse(id, out var guidId))
+            throw new ArgumentException($"ID '{id}' is not a valid GUID format.", nameof(id));
+
+        return await Get(guidId);
+    }
+
     public async Task<Record?> Get(GetRequest request)
     {
         var sql = $"""
