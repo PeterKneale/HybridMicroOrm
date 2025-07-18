@@ -85,6 +85,9 @@ jobs:
   package:
     runs-on: ubuntu-latest
     needs: build
+    permissions:
+      contents: read
+      packages: write
     # Only run on release events or when manually triggered on main branch
     if: github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main')
     steps:
