@@ -47,7 +47,7 @@ public class ListSortTests(IntegrationTestFixture fixture, ITestOutputHelper out
         await ExecUser1(x => x.Insert(InsertRequest.Create(id, Car.Type, new Car
         {
             Id = id, Make = "Toyota", Model = "Corolla"
-        })));
+        }, JsonConverter)));
         return id;
     }
 }
