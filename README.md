@@ -147,18 +147,15 @@ public class SystemTextJsonConverter : IJsonConverter
 public class CustomerService
 {
     private readonly IHybridMicroOrm _orm;
-    private readonly IJsonConverter _jsonConverter;
 
-    public CustomerService(IHybridMicroOrm orm, IJsonConverter jsonConverter)
+    public CustomerService(IHybridMicroOrm orm)
     {
         _orm = orm;
-        _jsonConverter = jsonConverter;
     }
 
     public async Task<Customer?> GetCustomer(Guid id)
     {
-        var record = await _orm.Get(id);
-        return record?.Get<Customer>(_jsonConverter);
+        return await _orm.Get<Customer>(id);
     }
 
     public async Task CreateCustomer(Customer customer)
@@ -167,7 +164,6 @@ public class CustomerService
             id: Guid.NewGuid(),
             type: "customer",
             data: customer,
-            jsonConverter: _jsonConverter,
             isTenantData: true
         );
         await _orm.Insert(request);
