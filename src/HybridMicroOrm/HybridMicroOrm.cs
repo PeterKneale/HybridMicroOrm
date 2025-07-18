@@ -2,6 +2,21 @@ using static HybridMicroOrm.Constants;
 
 namespace HybridMicroOrm;
 
+// Internal class for database mapping
+internal class RecordData
+{
+    public Guid Id { get; init; }
+    public Guid? TenantId { get; init; }
+    public string Type { get; set; } = "";
+    public string Data { get; set; } = "";
+    public DateTime CreatedAt { get; init; }
+    public Guid? CreatedBy { get; init; }
+    public DateTime? UpdatedAt { get; set; }
+    public Guid? UpdatedBy { get; set; }
+    public DateTime? DeletedAt { get; set; }
+    public Guid? DeletedBy { get; set; }
+}
+
 internal class HybridMicroOrm(ITenantContext tenantContext, IUserContext userContext, ICurrentDateTime currentDateTime, IOptions<HybridMicroOrmOptions> options, IJsonConverter jsonConverter, ILogger<HybridMicroOrm> log) : IHybridMicroOrm
 {
     private readonly HybridMicroOrmOptions _options = options.Value ?? throw new ArgumentNullException(nameof(options));
@@ -30,9 +45,9 @@ internal class HybridMicroOrm(ITenantContext tenantContext, IUserContext userCon
         await connection.ExecuteAsync(sql, parameters);
     }
 
-    public async Task<Record?> Get(Guid id) => await Get(new GetRequest(id));
+    public async Task<Record<T>?> Get<T>(Guid id) => await Get<T>(new GetRequest(id));
 
-    public async Task<Record?> Get(string id)
+    public async Task<Record<T>?> Get<T>(string id)
     {
         if (string.IsNullOrWhiteSpace(id))
             throw new ArgumentException("ID cannot be null, empty, or whitespace.", nameof(id));
@@ -40,10 +55,10 @@ internal class HybridMicroOrm(ITenantContext tenantContext, IUserContext userCon
         if (!Guid.TryParse(id, out var guidId))
             throw new ArgumentException($"ID '{id}' is not a valid GUID format.", nameof(id));
 
-        return await Get(guidId);
+        return await Get<T>(guidId);
     }
 
-    public async Task<Record?> Get(GetRequest request)
+    public async Task<Record<T>?> Get<T>(GetRequest request)
     {
         var sql = $"""
                     SELECT * FROM {_options.TableName} 
@@ -61,10 +76,27 @@ internal class HybridMicroOrm(ITenantContext tenantContext, IUserContext userCon
         };
         Log(sql, parameters);
         await using var connection = GetConnection();
-        return await connection.QuerySingleOrDefaultAsync<Record>(sql, parameters);
+        var recordData = await connection.QuerySingleOrDefaultAsync<RecordData>(sql, parameters);
+        
+        if (recordData == null)
+            return null;
+
+        return new Record<T>
+        {
+            Id = recordData.Id,
+            TenantId = recordData.TenantId,
+            Type = recordData.Type,
+            Data = _jsonConverter.Deserialize<T>(recordData.Data),
+            CreatedAt = recordData.CreatedAt,
+            CreatedBy = recordData.CreatedBy,
+            UpdatedAt = recordData.UpdatedAt,
+            UpdatedBy = recordData.UpdatedBy,
+            DeletedAt = recordData.DeletedAt,
+            DeletedBy = recordData.DeletedBy
+        };
     }
 
-    public async Task<IEnumerable<Record>> List(ListRequest request)
+    public async Task<IEnumerable<Record<T>>> List<T>(ListRequest request)
     {
         var filterSql = request.Filter == null ? "" : $"AND {request.Filter.Query}";
         var sql = $"""
@@ -87,7 +119,21 @@ internal class HybridMicroOrm(ITenantContext tenantContext, IUserContext userCon
 
         Log(sql, parameters);
         await using var connection = GetConnection();
-        return await connection.QueryAsync<Record>(sql, parameters);
+        var recordDataList = await connection.QueryAsync<RecordData>(sql, parameters);
+        
+        return recordDataList.Select(recordData => new Record<T>
+        {
+            Id = recordData.Id,
+            TenantId = recordData.TenantId,
+            Type = recordData.Type,
+            Data = _jsonConverter.Deserialize<T>(recordData.Data),
+            CreatedAt = recordData.CreatedAt,
+            CreatedBy = recordData.CreatedBy,
+            UpdatedAt = recordData.UpdatedAt,
+            UpdatedBy = recordData.UpdatedBy,
+            DeletedAt = recordData.DeletedAt,
+            DeletedBy = recordData.DeletedBy
+        });
     }
 
     private static object MergeFilterIntoParameters(Filter filter, object parameters)

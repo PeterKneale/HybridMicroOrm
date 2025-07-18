@@ -1,5 +1,4 @@
 using HybridMicroOrm.Contracts;
-using Record = HybridMicroOrm.Contracts.Record;
 
 namespace HybridMicroOrm.Tests;
 
@@ -24,8 +23,8 @@ public class FilterTests(IntegrationTestFixture fixture, ITestOutputHelper outpu
         mazdas.Select(x => x.Id).ShouldBe([id3], ignoreOrder: false);
     }
 
-    private async Task<IEnumerable<Record>> ListWithFilter(Filter filter) =>
-        await ExecUser1(x => x.List(new ListRequest(Car.Type)
+    private async Task<IEnumerable<Record<Car>>> ListWithFilter(Filter filter) =>
+        await ExecUser1(x => x.List<Car>(new ListRequest(Car.Type)
         {
             Filter = filter
         }));

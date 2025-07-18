@@ -13,8 +13,8 @@ public class ListTests(IntegrationTestFixture fixture, ITestOutputHelper output)
         await ExecUser1(x => x.Insert(CreateInsertCustomerRequest(Guid.NewGuid())));
 
         // act
-        var cars = await Exec(x => x.List(new ListRequest(Car.Type)));
-        var customers = await Exec(x => x.List(new ListRequest(User.Type)));
+        var cars = await Exec(x => x.List<Car>(new ListRequest(Car.Type)));
+        var customers = await Exec(x => x.List<User>(new ListRequest(User.Type)));
 
         // assert
         cars.ShouldNotBeNull();
@@ -33,7 +33,7 @@ public class ListTests(IntegrationTestFixture fixture, ITestOutputHelper output)
         await ExecUser1(x => x.Insert(CreateInsertCustomerRequest(Guid.NewGuid())));
 
         // assert
-        var results = await ExecUser1(x => x.List(new ListRequest("xxxxxxxxxxxxx")));
+        var results = await ExecUser1(x => x.List<User>(new ListRequest("xxxxxxxxxxxxx")));
 
         results.ShouldNotBeNull();
         results.Count().ShouldBe(0);
@@ -47,7 +47,7 @@ public class ListTests(IntegrationTestFixture fixture, ITestOutputHelper output)
         await ExecUser1(x => x.SoftDelete(customerId));
 
         // assert
-        var results = await Exec(x => x.List(new ListRequest(User.Type)));
+        var results = await Exec(x => x.List<User>(new ListRequest(User.Type)));
 
         results.ShouldNotBeNull();
         results.Count().ShouldBe(0);
@@ -61,7 +61,7 @@ public class ListTests(IntegrationTestFixture fixture, ITestOutputHelper output)
         await Exec(x => x.SoftDelete(customerId));
 
         // assert
-        var results = await Exec(x => x.List(new ListRequest(User.Type) { IncludeDeleted = true }));
+        var results = await Exec(x => x.List<User>(new ListRequest(User.Type) { IncludeDeleted = true }));
 
         results.ShouldNotBeNull();
         results.Count().ShouldBe(1);

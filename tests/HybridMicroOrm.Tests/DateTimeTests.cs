@@ -10,7 +10,7 @@ public class DateTimeTests(IntegrationTestFixture fixture, ITestOutputHelper out
         await ExecTenant1User1(x => x.Insert(CreateInsertRequest(customerId)));
 
         // act
-        var record = await ExecTenant1User1(x => x.Get(customerId));
+        var record = await ExecTenant1User1(x => x.Get<User>(customerId));
         Output.WriteLine(JsonConvert.SerializeObject(record,Formatting.Indented));
 
         // assert
@@ -28,7 +28,7 @@ public class DateTimeTests(IntegrationTestFixture fixture, ITestOutputHelper out
         await ExecTenant1User1(x => x.Update(CreateUpdateRequest(customerId)));
 
         // act
-        var record = await ExecTenant1User1(x => x.Get(customerId));
+        var record = await ExecTenant1User1(x => x.Get<User>(customerId));
         Output.WriteLine(JsonConvert.SerializeObject(record,Formatting.Indented));
 
         // assert
