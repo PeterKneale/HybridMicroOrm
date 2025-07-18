@@ -12,7 +12,18 @@
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>postgres;sql;json;multi-tenant;saas;dapper;table;storage</PackageTags>
-        <PackageVersion>1.0.6</PackageVersion>
+        <PackageDescription>A lightweight, JSON-based micro ORM for PostgreSQL with built-in multi-tenant support, designed for SaaS applications that need the flexibility of JSON storage with the reliability of PostgreSQL.</PackageDescription>
+        <RepositoryUrl>https://github.com/PeterKneale/HybridMicroOrm</RepositoryUrl>
+        <PackageProjectUrl>https://github.com/PeterKneale/HybridMicroOrm</PackageProjectUrl>
+        <PackageReleaseNotes>See https://github.com/PeterKneale/HybridMicroOrm/releases for release notes.</PackageReleaseNotes>
+        
+        <!-- Enable MinVer automatic versioning -->
+        <MinVerDefaultPreReleaseIdentifiers>alpha</MinVerDefaultPreReleaseIdentifiers>
+        <MinVerTagPrefix>v</MinVerTagPrefix>
+        
+        <!-- Enable symbol packages -->
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     </PropertyGroup>
 
     <ItemGroup>

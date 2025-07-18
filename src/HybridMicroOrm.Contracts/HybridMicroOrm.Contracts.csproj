@@ -12,12 +12,24 @@
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>postgres;sql;json;multi-tenant;saas;dapper;table;storage</PackageTags>
-        <PackageVersion>1.0.3</PackageVersion>
+        <PackageDescription>Contracts and interfaces for HybridMicroOrm - a lightweight, JSON-based micro ORM for PostgreSQL with built-in multi-tenant support.</PackageDescription>
+        <RepositoryUrl>https://github.com/PeterKneale/HybridMicroOrm</RepositoryUrl>
+        <PackageProjectUrl>https://github.com/PeterKneale/HybridMicroOrm</PackageProjectUrl>
+        <PackageReleaseNotes>See https://github.com/PeterKneale/HybridMicroOrm/releases for release notes.</PackageReleaseNotes>
+        
+        <!-- Enable MinVer automatic versioning -->
+        <MinVerDefaultPreReleaseIdentifiers>alpha</MinVerDefaultPreReleaseIdentifiers>
+        <MinVerTagPrefix>v</MinVerTagPrefix>
+        
+        <!-- Enable symbol packages -->
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="Newtonsoft.Json" Version="[13.0.1,14)"/>
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
+        <PackageReference Include="MinVer" Version="6.0.0" PrivateAssets="All" />
     </ItemGroup>
 
     <ItemGroup>
