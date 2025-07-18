@@ -61,6 +61,9 @@ using HybridMicroOrm;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Register JSON converter implementation (required)
+builder.Services.AddSingleton<IJsonConverter, NewtonsoftJsonConverter>(); // or your preferred implementation
+
 // Add HybridMicroOrm services
 builder.Services.AddHybridMicroOrm(options =>
 {
@@ -96,22 +99,66 @@ public class YourUserContext : IUserContext
 }
 ```
 
-3. **Use in Your Services**:
+3. **Implement JSON Converter** (required):
+
+You must implement `IJsonConverter` using your preferred JSON serializer. Here are examples for popular serializers:
+
+**Using Newtonsoft.Json:**
+```csharp
+using HybridMicroOrm.Contracts;
+using Newtonsoft.Json;
+
+public class NewtonsoftJsonConverter : IJsonConverter
+{
+    public string Serialize(object value)
+    {
+        return JsonConvert.SerializeObject(value);
+    }
+
+    public T Deserialize<T>(string json)
+    {
+        return JsonConvert.DeserializeObject<T>(json)!;
+    }
+}
+```
+
+**Using System.Text.Json:**
+```csharp
+using HybridMicroOrm.Contracts;
+using System.Text.Json;
+
+public class SystemTextJsonConverter : IJsonConverter
+{
+    public string Serialize(object value)
+    {
+        return JsonSerializer.Serialize(value);
+    }
+
+    public T Deserialize<T>(string json)
+    {
+        return JsonSerializer.Deserialize<T>(json)!;
+    }
+}
+```
+
+4. **Use in Your Services**:
 
 ```csharp
 public class CustomerService
 {
     private readonly IHybridMicroOrm _orm;
+    private readonly IJsonConverter _jsonConverter;
 
-    public CustomerService(IHybridMicroOrm orm)
+    public CustomerService(IHybridMicroOrm orm, IJsonConverter jsonConverter)
     {
         _orm = orm;
+        _jsonConverter = jsonConverter;
     }
 
     public async Task<Customer?> GetCustomer(Guid id)
     {
         var record = await _orm.Get(id);
-        return record?.Get<Customer>();
+        return record?.Get<Customer>(_jsonConverter);
     }
 
     public async Task CreateCustomer(Customer customer)
@@ -120,6 +167,7 @@ public class CustomerService
             id: Guid.NewGuid(),
             type: "customer",
             data: customer,
+            jsonConverter: _jsonConverter,
             isTenantData: true
         );
         await _orm.Insert(request);
@@ -218,8 +266,8 @@ public class Record
     public DateTime? DeletedAt { get; set; }
     public Guid? DeletedBy { get; set; }
 
-    // Type-safe deserialization
-    public T Get<T>() => JsonConvert.DeserializeObject<T>(Data)!;
+    // Type-safe deserialization using IJsonConverter
+    public T Get<T>(IJsonConverter jsonConverter) => jsonConverter.Deserialize<T>(Data);
 }
 ```
 
@@ -323,12 +371,13 @@ Two packages are published:
 
 1. **HybridMicroOrm** ([NuGet](https://www.nuget.org/packages/HybridMicroOrm/))
    - Main implementation with full ORM functionality
-   - Dependencies: Dapper, Npgsql, Newtonsoft.Json, Microsoft.Extensions.*
+   - Dependencies: Dapper, Npgsql, Microsoft.Extensions.*
+   - **No longer includes JSON serializer** - consumers must provide their own IJsonConverter implementation
    - Includes symbol package (.snupkg) for debugging
 
 2. **HybridMicroOrm.Contracts** ([NuGet](https://www.nuget.org/packages/HybridMicroOrm.Contracts/))
-   - Interfaces and contracts only
-   - Minimal dependencies (only Newtonsoft.Json)
+   - Interfaces and contracts only (including IJsonConverter)
+   - **No external dependencies** - completely standalone
    - Includes symbol package (.snupkg) for debugging
 
 ### Publishing Strategy
@@ -388,9 +437,11 @@ This script performs the same validations as the CI/CD pipeline.
 #### HybridMicroOrm Package:
 - **Dapper** (2.1.1 - 2.2): High-performance micro-ORM
 - **Npgsql** (9.0 - 10.0): PostgreSQL .NET driver
-- **Newtonsoft.Json** (13.0.1 - 14): JSON serialization
 - **Microsoft.Extensions.Options** (8.0.0 - 9.0.0): Configuration options pattern
 - **Microsoft.Extensions.Logging** (implicit): Logging abstraction
+
+#### Consumer Dependencies:
+- **IJsonConverter Implementation**: You must provide an implementation using your preferred JSON serializer (e.g., Newtonsoft.Json, System.Text.Json)
 
 #### Development Dependencies:
 - **Microsoft.SourceLink.GitHub**: Source linking for debugging
