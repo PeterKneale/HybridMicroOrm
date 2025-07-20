@@ -20,8 +20,8 @@ public class BaseTest : IAsyncLifetime
     {
         await using var scope = _fixture.Services.CreateAsyncScope();
         var manager = scope.ServiceProvider.GetRequiredService<IHybridMicroOrmManager>();
-        await manager.Drop();
-        await manager.Init();
+        await manager.Drop(CancellationToken.None);
+        await manager.Init(CancellationToken.None);
     }
 
     protected async Task Exec(Func<IHybridMicroOrm, Task> action, Guid? tenantId = null, Guid? userId = null)
