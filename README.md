@@ -159,6 +159,11 @@ public class CustomerService
         return record?.Data;
     }
 
+    public async Task<bool> CustomerExists(Guid id)
+    {
+        return await _orm.ExistsAsync(id);
+    }
+
     public async Task CreateCustomer(Customer customer)
     {
         var request = InsertRequest.Create(
@@ -243,6 +248,40 @@ Task Delete(Guid id)
 
 // Soft delete (marks as deleted)
 Task SoftDelete(Guid id)
+```
+
+#### Exists Operations
+```csharp
+// Check if record exists (sync)
+bool Exists(Guid id)
+
+// Check if record exists (async)
+Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken = default)
+```
+
+**Features:**
+- Returns only a boolean indicating whether the record exists
+- Uses efficient SQL (`EXISTS` clause) to avoid retrieving full records
+- Respects tenant isolation - only finds records accessible to current tenant
+- Excludes soft-deleted records from existence checks
+- Supports cancellation tokens in the async variant
+
+**Example Usage:**
+```csharp
+// Async usage (recommended)
+if (await orm.ExistsAsync(customerId))
+{
+    // Customer exists and is accessible
+}
+
+// Sync usage
+if (orm.Exists(customerId))
+{
+    // Customer exists and is accessible
+}
+
+// With cancellation token
+var exists = await orm.ExistsAsync(customerId, cancellationToken);
 ```
 
 ### Record<T> Class
