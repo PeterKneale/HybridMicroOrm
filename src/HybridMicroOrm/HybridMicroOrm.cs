@@ -24,7 +24,7 @@ internal class HybridMicroOrm(ITenantContext tenantContext, IUserContext userCon
 
     private NpgsqlConnection GetConnection() => new(_options.ConnectionString);
 
-    public async Task Insert(InsertRequest request)
+    public async Task Insert(InsertRequest request, CancellationToken cancellationToken = default)
     {
         var sql = $"""
                    INSERT INTO {_options.TableName} ({Id}, {TypeColumn}, {TenantId}, {Data}, {CreatedAt}, {CreatedBy}) 
@@ -42,12 +42,12 @@ internal class HybridMicroOrm(ITenantContext tenantContext, IUserContext userCon
         Log(sql, parameters);
 
         await using var connection = GetConnection();
-        await connection.ExecuteAsync(sql, parameters);
+        await connection.ExecuteAsync(new CommandDefinition(sql, parameters, cancellationToken: cancellationToken));
     }
 
-    public async Task<Record<T>?> Get<T>(Guid id) => await Get<T>(new GetRequest(id));
+    public async Task<Record<T>?> Get<T>(Guid id, CancellationToken cancellationToken = default) => await Get<T>(new GetRequest(id), cancellationToken);
 
-    public async Task<Record<T>?> Get<T>(string id)
+    public async Task<Record<T>?> Get<T>(string id, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(id))
             throw new ArgumentException("ID cannot be null, empty, or whitespace.", nameof(id));
@@ -55,10 +55,10 @@ internal class HybridMicroOrm(ITenantContext tenantContext, IUserContext userCon
         if (!Guid.TryParse(id, out var guidId))
             throw new ArgumentException($"ID '{id}' is not a valid GUID format.", nameof(id));
 
-        return await Get<T>(guidId);
+        return await Get<T>(guidId, cancellationToken);
     }
 
-    public async Task<Record<T>?> Get<T>(GetRequest request)
+    public async Task<Record<T>?> Get<T>(GetRequest request, CancellationToken cancellationToken = default)
     {
         var sql = $"""
                     SELECT * FROM {_options.TableName} 
@@ -76,7 +76,7 @@ internal class HybridMicroOrm(ITenantContext tenantContext, IUserContext userCon
         };
         Log(sql, parameters);
         await using var connection = GetConnection();
-        var recordData = await connection.QuerySingleOrDefaultAsync<RecordData>(sql, parameters);
+        var recordData = await connection.QuerySingleOrDefaultAsync<RecordData>(new CommandDefinition(sql, parameters, cancellationToken: cancellationToken));
         
         if (recordData == null)
             return null;
@@ -96,7 +96,7 @@ internal class HybridMicroOrm(ITenantContext tenantContext, IUserContext userCon
         };
     }
 
-    public async Task<IEnumerable<Record<T>>> List<T>(ListRequest request)
+    public async Task<IEnumerable<Record<T>>> List<T>(ListRequest request, CancellationToken cancellationToken = default)
     {
         var filterSql = request.Filter == null ? "" : $"AND {request.Filter.Query}";
         var sql = $"""
@@ -119,7 +119,7 @@ internal class HybridMicroOrm(ITenantContext tenantContext, IUserContext userCon
 
         Log(sql, parameters);
         await using var connection = GetConnection();
-        var recordDataList = await connection.QueryAsync<RecordData>(sql, parameters);
+        var recordDataList = await connection.QueryAsync<RecordData>(new CommandDefinition(sql, parameters, cancellationToken: cancellationToken));
         
         return recordDataList.Select(recordData => new Record<T>
         {
@@ -149,7 +149,7 @@ internal class HybridMicroOrm(ITenantContext tenantContext, IUserContext userCon
         return merged;
     }
 
-    public async Task Update(UpdateRequest request)
+    public async Task Update(UpdateRequest request, CancellationToken cancellationToken = default)
     {
         var sql = $"""
                    UPDATE {_options.TableName} 
@@ -175,10 +175,10 @@ internal class HybridMicroOrm(ITenantContext tenantContext, IUserContext userCon
         Log(sql, parameters);
 
         await using var connection = GetConnection();
-        await connection.ExecuteAsync(sql, parameters);
+        await connection.ExecuteAsync(new CommandDefinition(sql, parameters, cancellationToken: cancellationToken));
     }
 
-    public async Task Delete(Guid id)
+    public async Task Delete(Guid id, CancellationToken cancellationToken = default)
     {
         var sql = $"DELETE FROM {_options.TableName} WHERE {Id} = @Id AND ({TenantId} IS NULL OR {TenantId} = @TenantId)";
         var parameters = new
@@ -187,10 +187,10 @@ internal class HybridMicroOrm(ITenantContext tenantContext, IUserContext userCon
         };
         Log(sql, parameters);
         await using var connection = GetConnection();
-        await connection.ExecuteAsync(sql, parameters);
+        await connection.ExecuteAsync(new CommandDefinition(sql, parameters, cancellationToken: cancellationToken));
     }
 
-    public async Task SoftDelete(Guid id)
+    public async Task SoftDelete(Guid id, CancellationToken cancellationToken = default)
     {
         var sql = $"UPDATE {_options.TableName} SET {DeletedAt} = @DeletedAt, {DeletedBy} = @DeletedBy WHERE {Id} = @Id AND ({TenantId} IS NULL OR {TenantId} = @TenantId)";
         var parameters = new
@@ -202,7 +202,7 @@ internal class HybridMicroOrm(ITenantContext tenantContext, IUserContext userCon
         };
         Log(sql, parameters);
         await using var connection = GetConnection();
-        await connection.ExecuteAsync(sql, parameters);
+        await connection.ExecuteAsync(new CommandDefinition(sql, parameters, cancellationToken: cancellationToken));
     }
 
     private void Log(string sql, object parameters)
