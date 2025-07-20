@@ -201,4 +201,30 @@ public class GetTests(IntegrationTestFixture fixture, ITestOutputHelper output) 
         exception.ParamName.ShouldBe("id");
         exception.Message.ShouldContain("cannot be null, empty, or whitespace");
     }
+
+    [Fact]
+    public async Task Test_methods_accept_cancellation_tokens()
+    {
+        // arrange
+        var customerId = Guid.NewGuid();
+        var cancellationToken = CancellationToken.None;
+        
+        // Test that all methods accept cancellation tokens without compilation errors
+        await ExecTenant1User1(async x => 
+        {
+            await x.Insert(CreateInsertRequest(customerId), cancellationToken);
+            var record = await x.Get<User>(customerId, cancellationToken);
+            record.ShouldNotBeNull();
+            
+            var records = await x.List<User>(new ListRequest(User.Type), cancellationToken);
+            records.ShouldNotBeEmpty();
+            
+            var updateRequest = UpdateRequest.Create(customerId, User.Type, new User
+            {
+                Id = customerId, Name = "Updated Name", Email = "updated@example.com"
+            });
+            await x.Update(updateRequest, cancellationToken);
+            await x.SoftDelete(customerId, cancellationToken);
+        });
+    }
 }
