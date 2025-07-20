@@ -125,6 +125,12 @@ public class GetTests(IntegrationTestFixture fixture, ITestOutputHelper output) 
             Id = customerId, Name = "John Doe", Email = "user@example.com"
         }, isTenantData);
 
+    private InsertRequest CreateInsertCustomerRequest(Guid customerId) =>
+        InsertRequest.Create(customerId, User.Type, new User
+        {
+            Id = customerId, Name = "John Doe", Email = "user@example.com"
+        });
+
     [Fact]
     public async Task Test_get_with_valid_guid_string_returns_record()
     {
@@ -212,7 +218,7 @@ public class GetTests(IntegrationTestFixture fixture, ITestOutputHelper output) 
         // Test that all methods accept cancellation tokens without compilation errors
         await ExecTenant1User1(async x => 
         {
-            await x.Insert(CreateInsertRequest(customerId), cancellationToken);
+            await x.Insert(CreateInsertCustomerRequest(customerId), cancellationToken);
             var record = await x.Get<User>(customerId, cancellationToken);
             record.ShouldNotBeNull();
             
