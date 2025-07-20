@@ -205,6 +205,31 @@ internal class HybridMicroOrm(ITenantContext tenantContext, IUserContext userCon
         await connection.ExecuteAsync(new CommandDefinition(sql, parameters, cancellationToken: cancellationToken));
     }
 
+    public bool Exists(Guid id)
+    {
+        return ExistsAsync(id, CancellationToken.None).GetAwaiter().GetResult();
+    }
+
+    public async Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        var sql = $"""
+                   SELECT EXISTS(
+                       SELECT 1 FROM {_options.TableName} 
+                       WHERE {Id} = @Id 
+                       AND ({TenantId} IS NULL OR {TenantId} = @TenantId)
+                       AND ({DeletedAt} IS NULL)
+                   )
+                   """;
+        var parameters = new
+        {
+            Id = id,
+            tenantContext.TenantId
+        };
+        Log(sql, parameters);
+        await using var connection = GetConnection();
+        return await connection.QuerySingleAsync<bool>(new CommandDefinition(sql, parameters, cancellationToken: cancellationToken));
+    }
+
     private void Log(string sql, object parameters)
     {
         log.LogInformation("Executing SQL: {sql}\nParameters: {parameters}", sql, parameters);

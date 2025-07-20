@@ -10,4 +10,6 @@ public interface IHybridMicroOrm
     Task Update(UpdateRequest request, CancellationToken cancellationToken = default);
     Task Delete(Guid id, CancellationToken cancellationToken = default);
     Task SoftDelete(Guid id, CancellationToken cancellationToken = default);
+    bool Exists(Guid id);
+    Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken = default);
 }
