@@ -136,6 +136,67 @@ internal class HybridMicroOrm(ITenantContext tenantContext, IUserContext userCon
         });
     }
 
+    public async Task<PagedResponse<T>> ListPaged<T>(ListRequest request, CancellationToken cancellationToken = default)
+    {
+        var filterSql = request.Filter == null ? "" : $"AND {request.Filter.Query}";
+        var whereClause = $"""
+                          WHERE {TypeColumn} = @Type 
+                          AND ({TenantId} IS NULL OR {TenantId} = @TenantId)
+                          AND ({DeletedAt} IS NULL OR @IncludeDeleted = TRUE)
+                          {filterSql}
+                          """;
+        
+        // Get total count
+        var countSql = $"SELECT COUNT(*) FROM {_options.TableName} {whereClause}";
+        
+        // Get paged data
+        var offset = (request.PageNumber - 1) * request.PageSize;
+        var dataSql = $"""
+                      SELECT * FROM {_options.TableName} {whereClause}
+                      ORDER BY {request.SortBy.ToColumnName()} {request.SortOrder.ToSqlOrder()}
+                      LIMIT @PageSize OFFSET @Offset
+                      """;
+        
+        object parameters = new
+        {
+            request.Type,
+            tenantContext.TenantId,
+            request.IncludeDeleted,
+            request.PageSize,
+            Offset = offset
+        };
+        
+        if (request.Filter != null)
+        {
+            parameters = MergeFilterIntoParameters(request.Filter, parameters);
+        }
+
+        Log(countSql, parameters);
+        Log(dataSql, parameters);
+        
+        await using var connection = GetConnection();
+        
+        // Execute both queries
+        var totalCount = await connection.QuerySingleAsync<int>(new CommandDefinition(countSql, parameters, cancellationToken: cancellationToken));
+        var recordDataList = await connection.QueryAsync<RecordData>(new CommandDefinition(dataSql, parameters, cancellationToken: cancellationToken));
+        
+        var records = recordDataList.Select(recordData => new Record<T>
+        {
+            Id = recordData.Id,
+            TenantId = recordData.TenantId,
+            Type = recordData.Type,
+            Data = _jsonConverter.Deserialize<T>(recordData.Data),
+            CreatedAt = recordData.CreatedAt,
+            CreatedBy = recordData.CreatedBy,
+            UpdatedAt = recordData.UpdatedAt,
+            UpdatedBy = recordData.UpdatedBy,
+            DeletedAt = recordData.DeletedAt,
+            DeletedBy = recordData.DeletedBy
+        });
+        
+        return new PagedResponse<T>(records, totalCount, request.PageNumber, request.PageSize);
+    }
+
     private static object MergeFilterIntoParameters(Filter filter, object parameters)
     {
         dynamic merged = new System.Dynamic.ExpandoObject();

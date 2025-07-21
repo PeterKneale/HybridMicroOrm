@@ -202,7 +202,11 @@ Task<Record<T>?> Get<T>(GetRequest request)
 
 #### List Operations
 ```csharp
+// Get all records (unpaged)
 Task<IEnumerable<Record<T>>> List<T>(ListRequest request)
+
+// Get paged results with metadata
+Task<PagedResponse<T>> ListPaged<T>(ListRequest request)
 ```
 
 **ListRequest Options:**
@@ -211,6 +215,39 @@ Task<IEnumerable<Record<T>>> List<T>(ListRequest request)
 - `IncludeDeleted`: Include soft-deleted records
 - `SortBy`: Sort by Created, Updated, or Deleted
 - `SortOrder`: Ascending or Descending
+- `PageNumber`: Page number (default: 1)
+- `PageSize`: Records per page (default: 10)
+
+**PagedResponse Properties:**
+- `Records`: The actual records for the current page
+- `TotalCount`: Total number of records matching the criteria
+- `PageNumber`: Current page number
+- `PageSize`: Number of records per page
+- `TotalPages`: Total number of pages
+- `IsFirstPage`: True if this is the first page
+- `IsLastPage`: True if this is the last page
+- `StartIndex`: 1-based index of the first record on this page
+- `EndIndex`: 1-based index of the last record on this page
+
+**Paging Examples:**
+```csharp
+// Get first page with default size (10 records)
+var request = new ListRequest("product");
+var pagedResult = await orm.ListPaged<Product>(request);
+
+// Get specific page with custom size
+var request = new ListRequest("product") 
+{ 
+    PageNumber = 2, 
+    PageSize = 25 
+};
+var pagedResult = await orm.ListPaged<Product>(request);
+
+// Access paging metadata
+Console.WriteLine($"Page {pagedResult.PageNumber} of {pagedResult.TotalPages}");
+Console.WriteLine($"Showing {pagedResult.Records.Count()} of {pagedResult.TotalCount} records");
+Console.WriteLine($"Records {pagedResult.StartIndex}-{pagedResult.EndIndex}");
+```
 
 #### Insert Operations
 ```csharp

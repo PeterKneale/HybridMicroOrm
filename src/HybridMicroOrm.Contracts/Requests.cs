@@ -59,6 +59,8 @@ public class ListRequest(string type)
     public bool IncludeDeleted { get; init; } = false;
     public SortBy SortBy { get; init; } = SortBy.Created;
     public SortOrder SortOrder { get; init; } = SortOrder.Ascending;
+    public int PageNumber { get; init; } = 1;
+    public int PageSize { get; init; } = 10;
 }
 
 public record Filter(string Query, object Parameters);
