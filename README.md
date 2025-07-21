@@ -546,6 +546,59 @@ public async Task Test_tenant_record_can_be_read_with_tenant_context()
 }
 ```
 
+## Alternative Implementation: Extension Methods
+
+For scenarios requiring custom table schemas, different database providers, or minimal dependencies, an **extension methods implementation** is available as an alternative to the NuGet package approach.
+
+### When to Consider Extension Methods
+
+- **Custom Database Schemas**: Need to work with existing tables or custom column names
+- **Multiple Database Support**: Targeting SQL Server, MySQL, or other databases besides PostgreSQL
+- **Minimal Dependencies**: Want to avoid additional NuGet packages
+- **Performance Optimization**: Need to customize queries for specific use cases
+- **Legacy Integration**: Integrating with existing ORM or data access patterns
+
+### Quick Comparison
+
+| Feature | NuGet Package | Extension Methods |
+|---------|---------------|-------------------|
+| **Setup** | Medium (DI required) | Low (copy one file) |
+| **Dependencies** | 4+ packages | 2 packages (Dapper + DB driver) |
+| **Customization** | Configuration only | Complete control |
+| **Database Support** | PostgreSQL only | Any database (adaptable) |
+| **Maintenance** | External | Self-maintained |
+
+### Documentation
+
+- **[Architecture Analysis](ARCHITECTURE_ANALYSIS.md)** - Detailed technical comparison
+- **[Decision Matrix](DECISION_MATRIX.md)** - Help choosing the right approach  
+- **[Extension Methods Guide](src/HybridMicroOrm.Extensions/README.md)** - Complete usage documentation
+- **[Final Recommendations](FINAL_RECOMMENDATIONS.md)** - Strategic analysis and guidance
+
+### Extension Methods Quick Start
+
+```csharp
+using HybridMicroOrm.Extensions;
+using Npgsql;
+
+// No DI setup required
+using var connection = new NpgsqlConnection(connectionString);
+var options = new HybridRecordOptions
+{
+    TenantId = currentTenantId,
+    UserId = currentUserId
+};
+
+// Create table (one-time)
+await connection.CreateHybridRecordsTable(options);
+
+// Use directly
+await connection.InsertHybridRecord(id, "customer", customer, options);
+var record = await connection.GetHybridRecord<Customer>(id, options);
+```
+
+The extension methods implementation provides the same core functionality with more flexibility for customization and integration scenarios.
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
