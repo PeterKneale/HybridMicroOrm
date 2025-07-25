@@ -56,8 +56,12 @@ internal class HybridMicroOrmManager(IOptions<HybridMicroOrmOptions> options, IL
                 {DeletedBy} UUID NULL
             );
 
-            CREATE INDEX idx_id_tenant ON {_options.TableName} ({Id}, {TenantId});
-            CREATE INDEX idx_id_type_tenant ON {_options.TableName} ({Id}, {TypeColumn}, {TenantId});
+            -- Index to speed up queries filtering by id and tenant_id (id based multi-tenant get operations)
+            CREATE INDEX idx_id_tenant ON {_options.TableName} ({TenantId}, {Id});
+            -- Index to speed up queries filtering by tenant_id and type (tenant-based multi-tenant list operations)
+            CREATE INDEX idx_tenant_type ON {_options.TableName} ({TenantId}, {TypeColumn});
+            -- GIN index on JSONB data column for efficient querying/filtering within JSON documents
+            CREATE INDEX idx_data_gin ON {_options.TableName} USING GIN ({Data});
         ";
         log.LogInformation("Executing SQL: {sql}", sql);
         await using var connection = GetConnection();

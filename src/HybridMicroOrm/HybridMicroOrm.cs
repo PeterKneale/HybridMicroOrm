@@ -62,10 +62,14 @@ internal class HybridMicroOrm(ITenantContext tenantContext, IUserContext userCon
     {
         var sql = $"""
                     SELECT * FROM {_options.TableName} 
-                    WHERE {Id} = @Id 
-                    AND (@Type IS NULL OR {TypeColumn} = @Type) 
-                    AND ({TenantId} IS NULL OR {TenantId} = @TenantId)
-                    AND ({DeletedAt} IS NULL OR @IncludeDeleted = TRUE);
+                    WHERE 
+                    ({TenantId} IS NULL OR {TenantId} = @TenantId)
+                    AND 
+                    {Id} = @Id 
+                    AND 
+                    (@Type IS NULL OR {TypeColumn} = @Type) 
+                    AND 
+                    ({DeletedAt} IS NULL OR @IncludeDeleted = TRUE);
                    """;
         var parameters = new
         {
@@ -100,9 +104,12 @@ internal class HybridMicroOrm(ITenantContext tenantContext, IUserContext userCon
     {
         var filterSql = request.Filter == null ? "" : $"AND {request.Filter.Query}";
         var sql = $"""
-                   SELECT * FROM {_options.TableName} WHERE {TypeColumn} = @Type 
-                   AND ({TenantId} IS NULL OR {TenantId} = @TenantId)
-                   AND ({DeletedAt} IS NULL OR @IncludeDeleted = TRUE)
+                   SELECT * FROM {_options.TableName} WHERE 
+                   ({TenantId} IS NULL OR {TenantId} = @TenantId)
+                   AND 
+                   {TypeColumn} = @Type 
+                   AND 
+                   ({DeletedAt} IS NULL OR @IncludeDeleted = TRUE)
                    {filterSql}
                    ORDER BY {request.SortBy.ToColumnName()} {request.SortOrder.ToSqlOrder()}
                    """;
@@ -140,9 +147,12 @@ internal class HybridMicroOrm(ITenantContext tenantContext, IUserContext userCon
     {
         var filterSql = request.Filter == null ? "" : $"AND {request.Filter.Query}";
         var whereClause = $"""
-                          WHERE {TypeColumn} = @Type 
-                          AND ({TenantId} IS NULL OR {TenantId} = @TenantId)
-                          AND ({DeletedAt} IS NULL OR @IncludeDeleted = TRUE)
+                          WHERE 
+                          ({TenantId} IS NULL OR {TenantId} = @TenantId)
+                          AND 
+                          {TypeColumn} = @Type 
+                          AND 
+                          ({DeletedAt} IS NULL OR @IncludeDeleted = TRUE)
                           {filterSql}
                           """;
         
