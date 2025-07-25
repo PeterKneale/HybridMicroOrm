@@ -9,3 +9,10 @@ services:
       POSTGRES_DB: db
     ports:
       - "5432:5432"
+    networks:
+      - hybrid-micro-orm-net
+
+networks:
+  # docker network create hybrid-micro-orm-net || true
+  hybrid-micro-orm-net:
+    external: true

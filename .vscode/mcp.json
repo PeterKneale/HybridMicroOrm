@@ -1,0 +1,16 @@
+{
+  "servers": {
+    "postgres": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "--name", "mcp-postgres",
+        "--network", "hybrid-micro-orm-net",
+        "mcp/postgres",
+        "postgresql://admin:password@db:5432/db"
+      ]
+    }
+  }
+}
