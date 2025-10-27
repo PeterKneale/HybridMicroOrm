@@ -71,13 +71,13 @@ jobs:
           reporttypes: 'HtmlInline;Cobertura'
     
       - name: Upload coverage report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: CoverageReports
           path: CoverageReports
     
       - name: Upload coverage history
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: CoverageHistory
           path: CoverageHistory
